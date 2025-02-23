@@ -31,6 +31,11 @@ public class Comment {
     private LocalDateTime timestamp;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "ticket_id")
+    private Ticket ticket;
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User author;
+
 }
