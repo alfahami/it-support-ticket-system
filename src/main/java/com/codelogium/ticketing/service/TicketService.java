@@ -1,6 +1,8 @@
 package com.codelogium.ticketing.service;
 
-public interface TicketService {
+import com.codelogium.ticketing.entity.Ticket;
 
+public interface TicketService {
+    Ticket createTicket(Ticket newTicket);
     
 }
