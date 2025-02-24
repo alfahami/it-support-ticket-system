@@ -33,7 +33,7 @@ public class TicketServiceImp implements TicketService {
     public Ticket updateTicket(Long userId, Long ticketId, Ticket newTicket) {
         UserServiceImp.unwrapUser(userId, userRepository.findById(userId));
 
-        Ticket retrievedTicket = unwrapTicket(ticketId, ticketRepository.findByIdAndUserId(ticketId, userId));
+        Ticket retrievedTicket = unwrapTicket(ticketId, ticketRepository.findByIdAndCreatorId(ticketId, userId));
 
         newTicket.setId(retrievedTicket.getId()); // ignoring ID in request body as it might be tampered
         updateIfNotNull(retrievedTicket::setTitle, newTicket.getTitle());

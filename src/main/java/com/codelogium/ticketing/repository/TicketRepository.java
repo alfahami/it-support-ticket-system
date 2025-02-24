@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.codelogium.ticketing.entity.Ticket;
 
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
-    Optional<Ticket> findByIdAndUserId(Long ticketId, Long userId);
+    Optional<Ticket> findByIdAndCreatorId(Long ticketId, Long userId);
 } 
