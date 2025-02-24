@@ -37,6 +37,11 @@ public class TicketController {
         return ResponseEntity.ok(ticketService.updateTicket(ticketId, userId, newTicket));
     }
 
+    @GetMapping("/{ticketId}")
+    public ResponseEntity<Ticket> retrieveTicket(@PathVariable Long ticketId, @PathVariable Long userId) {
+        return ResponseEntity.ok(ticketService.retrieveTicket(ticketId, userId));
+    }
+
     @GetMapping("/all")
     public ResponseEntity<List<Ticket>> retrieveAllTicketsByCreator(@PathVariable Long userId) {
         return ResponseEntity.ok(ticketService.retrieveTicketsByCreator(userId));
