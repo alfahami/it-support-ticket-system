@@ -1,5 +1,6 @@
 package com.codelogium.ticketing.web;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +25,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<User> registerUser(@RequestBody @Valid User user) {
-        return  ResponseEntity.ok(userService.createUser(user));
+        return  ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(user));
     }
 
     @GetMapping("/{userId}")
