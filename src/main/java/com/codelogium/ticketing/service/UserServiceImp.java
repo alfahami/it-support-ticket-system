@@ -1,5 +1,7 @@
 package com.codelogium.ticketing.service;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 import com.codelogium.ticketing.entity.User;
@@ -21,5 +23,9 @@ public class UserServiceImp implements UserService {
 
     public void validateUserExists(Long userId) {
         if(!userRepository.existsById(userId)) throw new ResourceNotFoundException(userId, User.class);
+    }
+
+    public static User unwrapUser(Long userId, Optional<User> optionalUser) {
+        return optionalUser.orElseThrow(() -> new ResourceNotFoundException(userId, User.class));
     }
 }
