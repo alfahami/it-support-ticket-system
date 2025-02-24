@@ -1,6 +1,7 @@
 package com.codelogium.ticketing.service;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -43,6 +44,12 @@ public class TicketServiceImp implements TicketService {
         updateIfNotNull(retrievedTicket::setStatus, newTicket.getStatus());
         
         return ticketRepository.save(retrievedTicket);
+    }
+
+    @Override
+    public List<Ticket> retrieveTicketsByCreator(Long userId) {
+        UserServiceImp.unwrapUser(userId, userRepository.findById(userId));
+        return ticketRepository.findByCreatorId(userId);
     }
 
     @Override
