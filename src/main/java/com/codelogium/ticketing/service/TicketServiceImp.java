@@ -31,8 +31,8 @@ public class TicketServiceImp implements TicketService {
     }
 
     @Override
-    public Ticket updateTicket(Long userId, Long ticketId, Ticket newTicket) {
-        UserServiceImp.unwrapUser(userId, userRepository.findById(userId));
+    public Ticket updateTicket(Long ticketId, Long userId, Ticket newTicket) {
+        UserServiceImp.unwrapUser(userId, ticketRepository.findCreatorByTicket(ticketId));
 
         Ticket retrievedTicket = unwrapTicket(ticketId, ticketRepository.findByIdAndCreatorId(ticketId, userId));
 
@@ -47,13 +47,20 @@ public class TicketServiceImp implements TicketService {
     }
 
     @Override
+    public Ticket retrieveTicket(Long ticketId, Long userId) {
+        UserServiceImp.unwrapUser(userId, ticketRepository.findCreatorByTicket(ticketId));
+        
+        return unwrapTicket(ticketId, ticketRepository.findByIdAndCreatorId(ticketId, userId));
+    }
+
+    @Override
     public List<Ticket> retrieveTicketsByCreator(Long userId) {
-        UserServiceImp.unwrapUser(userId, userRepository.findById(userId));
+        UserServiceImp.unwrapUser(userId, ticketRepository.findCreatorByTicket(userId));
         return ticketRepository.findByCreatorId(userId);
     }
 
     @Override
-    public void removeTicket(Long userId, Long ticketId) {
+    public void removeTicket(Long ticketId, Long userId) {
         UserServiceImp.unwrapUser(userId, userRepository.findById(userId));
         Ticket ticket = unwrapTicket(ticketId, ticketRepository.findByIdAndCreatorId(ticketId, userId));
 

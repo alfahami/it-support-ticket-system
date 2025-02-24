@@ -33,8 +33,8 @@ public class TicketController {
     }
 
     @PatchMapping("/{ticketId}")
-    public ResponseEntity<Ticket> updateTicket(@PathVariable Long userId, @PathVariable Long ticketId, @RequestBody @Valid Ticket newTicket) {
-        return ResponseEntity.ok(ticketService.updateTicket(userId, ticketId, newTicket));
+    public ResponseEntity<Ticket> updateTicket(@PathVariable Long ticketId, @PathVariable Long userId, @RequestBody @Valid Ticket newTicket) {
+        return ResponseEntity.ok(ticketService.updateTicket(ticketId, userId, newTicket));
     }
 
     @GetMapping("/all")
