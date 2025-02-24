@@ -21,6 +21,11 @@ public class UserServiceImp implements UserService {
         return userRepository.save(user);
     }
 
+    @Override
+    public User retrieveUser(Long userId) {
+        return unwrapUser(userId, userRepository.findById(userId));
+    }
+
     public void validateUserExists(Long userId) {
         if(!userRepository.existsById(userId)) throw new ResourceNotFoundException(userId, User.class);
     }
