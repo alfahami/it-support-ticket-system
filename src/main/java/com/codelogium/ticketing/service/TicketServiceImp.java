@@ -1,5 +1,6 @@
 package com.codelogium.ticketing.service;
 
+import java.time.Instant;
 import org.springframework.stereotype.Service;
 
 import com.codelogium.ticketing.entity.Ticket;
@@ -20,6 +21,7 @@ public class TicketServiceImp implements TicketService {
     public Ticket createTicket(Long userId, Ticket newTicket) {
         User user = UserServiceImp.unwrapUser(userId, userRepository.findById(userId));
         newTicket.setCreator(user);
+        newTicket.setTimestamp(Instant.now());
         return ticketRepository.save(newTicket);
     }
 }

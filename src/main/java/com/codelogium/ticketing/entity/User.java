@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.codelogium.ticketing.entity.enums.UserRole;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -44,6 +45,7 @@ public class User {
     private UserRole role;
 
     @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Ticket> tickets = new ArrayList<>();
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -1,13 +1,14 @@
 package com.codelogium.ticketing.entity;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.codelogium.ticketing.entity.enums.Category;
 import com.codelogium.ticketing.entity.enums.Priority;
 import com.codelogium.ticketing.entity.enums.Status;
-
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -19,7 +20,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -40,18 +40,27 @@ public class Ticket {
     @NotBlank(message = "Desscription cannot be blank or null")
     private String description;
 
-    @NotNull(message = "Creation date is required")
-    private LocalDateTime creationDate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
+    private Instant timestamp;
+
+    // @NotNull(message = "Creation date is required")
+    // private LocalDateTime creationDate;
 
     private Status status;
     private Category category;
     private Priority priority;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JsonBackReference
     @JoinColumn(name = "user_id")
     private User creator;
 
     @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
+
+    public void setCreationDate(Instant now) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setCreationDate'");
+    }
 
 }
