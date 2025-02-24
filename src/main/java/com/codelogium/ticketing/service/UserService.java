@@ -1,5 +1,7 @@
 package com.codelogium.ticketing.service;
 
-public interface UserService {
+import com.codelogium.ticketing.entity.User;
 
+public interface UserService {
+    User createUser(User user);
 } 
