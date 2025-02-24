@@ -26,6 +26,13 @@ public class UserServiceImp implements UserService {
         return unwrapUser(userId, userRepository.findById(userId));
     }
 
+    @Override
+    public void removeUser(Long userId) {
+        User retrievedUser = unwrapUser(userId, userRepository.findById(userId));
+
+        userRepository.delete(retrievedUser);
+    }
+
     public void validateUserExists(Long userId) {
         if(!userRepository.existsById(userId)) throw new ResourceNotFoundException(userId, User.class);
     }
