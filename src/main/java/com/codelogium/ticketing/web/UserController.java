@@ -1,8 +1,9 @@
 package com.codelogium.ticketing.web;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +25,11 @@ public class UserController {
     @PostMapping
     public ResponseEntity<User> registerUser(@RequestBody @Valid User user) {
         return  ResponseEntity.ok(userService.createUser(user));
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<User> retrieveUser(@PathVariable Long userId) {
+        return ResponseEntity.ok(userService.retrieveUser(userId));
     }
 
 
