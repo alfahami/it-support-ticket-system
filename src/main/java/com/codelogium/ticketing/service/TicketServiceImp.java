@@ -45,6 +45,14 @@ public class TicketServiceImp implements TicketService {
         return ticketRepository.save(retrievedTicket);
     }
 
+    @Override
+    public void removeTicket(Long userId, Long ticketId) {
+        UserServiceImp.unwrapUser(userId, userRepository.findById(userId));
+        Ticket ticket = unwrapTicket(ticketId, ticketRepository.findByIdAndCreatorId(ticketId, userId));
+
+        ticketRepository.delete(ticket);
+    }
+
     public static Ticket unwrapTicket(Long ticketId, Optional<Ticket> optionalTicket) {
         return optionalTicket.orElseThrow(() -> new ResourceNotFoundException(ticketId, Ticket.class));
     }
