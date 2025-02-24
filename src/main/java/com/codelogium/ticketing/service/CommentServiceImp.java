@@ -1,5 +1,7 @@
 package com.codelogium.ticketing.service;
 
+import java.time.Instant;
+
 import org.springframework.stereotype.Service;
 
 import com.codelogium.ticketing.entity.Comment;
@@ -23,6 +25,7 @@ public class CommentServiceImp implements CommentService {
         Ticket retrieveTicket = TicketServiceImp.unwrapTicket(ticketId, ticketRepository.findByIdAndCreatorId(ticketId, userId));
         newComment.setTicket(retrieveTicket);
 
+        newComment.setTimestamp(Instant.now());
         return commentRepository.save(newComment);
     }
 }
