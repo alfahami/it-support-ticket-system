@@ -12,14 +12,14 @@ import lombok.AllArgsConstructor;
 @Service
 @AllArgsConstructor
 public class TicketServiceImp implements TicketService {
-    
+
     private TicketRepository ticketRepository;
     private UserRepository userRepository;
 
     @Override
     public Ticket createTicket(Long userId, Ticket newTicket) {
-       User user = UserServiceImp.unwrapUser(userId, userRepository.findById(userId));
-       newTicket.setCreator(user);
+        User user = UserServiceImp.unwrapUser(userId, userRepository.findById(userId));
+        newTicket.setCreator(user);
         return ticketRepository.save(newTicket);
     }
 }
