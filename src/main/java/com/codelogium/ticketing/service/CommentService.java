@@ -1,5 +1,7 @@
 package com.codelogium.ticketing.service;
 
-public interface CommentService {
+import com.codelogium.ticketing.entity.Comment;
 
+public interface CommentService {
+    Comment createComment(Long ticketId, Long userId, Comment comment);
 } 
