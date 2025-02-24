@@ -1,6 +1,9 @@
 package com.codelogium.ticketing.entity;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -28,14 +31,16 @@ public class Comment {
     @NotBlank(message = "Content cannot be null or blank")
     private String content;
 
-    private LocalDateTime timestamp;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
+    private Instant timestamp;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ticket_id")
+    @JsonBackReference
     private Ticket ticket;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User author;
-
 }

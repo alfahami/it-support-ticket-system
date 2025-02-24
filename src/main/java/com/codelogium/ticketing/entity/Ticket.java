@@ -9,6 +9,8 @@ import com.codelogium.ticketing.entity.enums.Priority;
 import com.codelogium.ticketing.entity.enums.Status;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -43,9 +45,6 @@ public class Ticket {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
     private Instant timestamp;
 
-    // @NotNull(message = "Creation date is required")
-    // private LocalDateTime creationDate;
-
     private Status status;
     private Category category;
     private Priority priority;
@@ -56,11 +55,6 @@ public class Ticket {
     private User creator;
 
     @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Comment> comments = new ArrayList<>();
-
-    public void setCreationDate(Instant now) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setCreationDate'");
-    }
-
 }
