@@ -24,7 +24,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                     System.out.println("Username: " + user.getUsername());
                     System.out.println("Password: " + user.getPassword());
                 } catch (IOException e) {
-                    throw new RuntimeException(e.getMessage());
+                    throw new RuntimeException();
                 }
                 
         return super.attemptAuthentication(request, response);

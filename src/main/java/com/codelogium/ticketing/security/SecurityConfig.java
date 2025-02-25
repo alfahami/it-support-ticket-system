@@ -8,6 +8,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
 import com.codelogium.ticketing.security.filter.AuthenticationFilter;
+import com.codelogium.ticketing.security.filter.ExceptionHandlerFilter;
 
 import lombok.AllArgsConstructor;
 
@@ -29,6 +30,7 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.POST, SecurityConstants.REGISTER_PATH).permitAll()
             .anyRequest().authenticated()
             .and()
+            .addFilterBefore(new ExceptionHandlerFilter(), AuthenticationFilter.class) // first filter to run before any filter
             .addFilter(authenticationFilter)
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
