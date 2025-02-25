@@ -44,7 +44,7 @@ public class CommentServiceImp implements CommentService {
         Comment retrievedComment = unwrapComment(commentId, commentRepository.findByIdAndTicketIdAndAuthorId(commentId, ticketId, userId));
 
         newComment.setId(retrievedComment.getId()); // prevent intentional ID tampering
-        
+
         //TODO: timestamp should be automatically changed when the user has made some changes
         updateIfNotNull(retrievedComment::setAuthor, newComment.getAuthor());
         updateIfNotNull(retrievedComment::setContent, newComment.getContent());
@@ -53,6 +53,20 @@ public class CommentServiceImp implements CommentService {
         updateIfNotNull(retrievedComment::setTimestamp, newComment.getTimestamp());
 
         return commentRepository.save(retrievedComment);
+    }
+
+    @Override
+    public Comment retrieveComment(Long userId, Long ticketId, Long commentId) {
+        // Checks if user exists
+        UserServiceImp.unwrapUser(userId, ticketRepository.findCreatorByTicket(ticketId));
+
+        // Checks if user has ticket
+        TicketServiceImp.unwrapTicket(ticketId, ticketRepository.findByIdAndCreatorId(ticketId, userId));
+
+        // retrieves the comment of the checked user's ticket
+        Comment retrievedComment = unwrapComment(commentId, commentRepository.findByIdAndTicketIdAndAuthorId(commentId, ticketId, userId));
+
+        return retrievedComment;
     }
 
     public static Comment unwrapComment(Long commentId, Optional<Comment> optionalComment) {
