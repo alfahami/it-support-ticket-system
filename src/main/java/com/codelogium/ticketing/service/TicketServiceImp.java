@@ -6,12 +6,17 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.codelogium.ticketing.entity.AuditLog;
 import com.codelogium.ticketing.entity.Ticket;
 import com.codelogium.ticketing.entity.User;
 import com.codelogium.ticketing.entity.enums.Status;
 import com.codelogium.ticketing.exception.ResourceNotFoundException;
+import com.codelogium.ticketing.repository.AuditLogRepository;
 import com.codelogium.ticketing.repository.TicketRepository;
 import com.codelogium.ticketing.repository.UserRepository;
+
+import jakarta.transaction.Transactional;
+
 import static com.codelogium.ticketing.util.EntityUtils.*;
 
 import lombok.AllArgsConstructor;
@@ -22,6 +27,7 @@ public class TicketServiceImp implements TicketService {
 
     private TicketRepository ticketRepository;
     private UserRepository userRepository;
+    private AuditLogRepository auditLogRepository;
 
     @Override
     public Ticket createTicket(Long userId, Ticket newTicket) {
@@ -31,26 +37,43 @@ public class TicketServiceImp implements TicketService {
         return ticketRepository.save(newTicket);
     }
 
+    @Transactional
     @Override
     public Ticket updateTicket(Long ticketId, Long userId, Ticket newTicket) {
+        // Verify user existance by checking the creator relationship
         UserServiceImp.unwrapUser(userId, ticketRepository.findCreatorByTicket(ticketId));
 
+        // Get the ticket and verify it belongs to this user
         Ticket retrievedTicket = unwrapTicket(ticketId, ticketRepository.findByIdAndCreatorId(ticketId, userId));
 
-        newTicket.setId(retrievedTicket.getId()); // ignoring ID in request body as it might be tampered
+        // Store old status before making changes
+        Status oldStatus = retrievedTicket.getStatus();
+
         updateIfNotNull(retrievedTicket::setTitle, newTicket.getTitle());
         updateIfNotNull(retrievedTicket::setDescription, newTicket.getDescription());
         updateIfNotNull(retrievedTicket::setCategory, newTicket.getCategory());
         updateIfNotNull(retrievedTicket::setPriority, newTicket.getPriority());
         updateIfNotNull(retrievedTicket::setStatus, newTicket.getStatus());
-        
-        return ticketRepository.save(retrievedTicket);
+
+        // Save ticket update
+        ticketRepository.save(retrievedTicket);
+
+        // Log status change if only there's an actual modification
+        if (newTicket.getStatus() != null && !newTicket.getStatus().equals(oldStatus)) {
+            auditLogRepository.save(new AuditLog(null, ticketId, userId, "STATUS_UPDATED", oldStatus.toString(),
+                    newTicket.getStatus().toString(), Instant.now()));
+            auditLogRepository.flush(); // Ensure immediate persistence
+
+        }
+
+        return retrievedTicket;
+
     }
 
     @Override
     public Ticket retrieveTicket(Long ticketId, Long userId) {
         UserServiceImp.unwrapUser(userId, ticketRepository.findCreatorByTicket(ticketId));
-        
+
         return unwrapTicket(ticketId, ticketRepository.findByIdAndCreatorId(ticketId, userId));
     }
 
