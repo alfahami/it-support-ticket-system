@@ -2,6 +2,7 @@ package com.codelogium.ticketing.service;
 
 import java.util.Optional;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.codelogium.ticketing.entity.User;
@@ -15,9 +16,12 @@ import lombok.AllArgsConstructor;
 public class UserServiceImp implements UserService {
     
     private UserRepository userRepository;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
     public User createUser(User user) {
+        // Encoding the password before saving
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
