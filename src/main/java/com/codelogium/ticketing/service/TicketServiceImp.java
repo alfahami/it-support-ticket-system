@@ -59,7 +59,7 @@ public class TicketServiceImp implements TicketService {
         ticketRepository.save(retrievedTicket);
 
         // Log status change if only there's an actual modification
-        if (newTicket.getStatus() != null && !newTicket.getStatus().equals(oldStatus)) {
+        if (isStatusChanged(oldStatus, newTicket.getStatus())) {
             auditLogRepository.save(new AuditLog(null, ticketId, userId, "STATUS_UPDATED", oldStatus.toString(),
                     newTicket.getStatus().toString(), Instant.now()));
             auditLogRepository.flush(); // Ensure immediate persistence
@@ -94,6 +94,10 @@ public class TicketServiceImp implements TicketService {
         Ticket ticket = unwrapTicket(ticketId, ticketRepository.findByIdAndCreatorId(ticketId, userId));
 
         ticketRepository.delete(ticket);
+    }
+
+    private boolean isStatusChanged(Status oldStatus, Status newStatus) {
+        return newStatus != null && !oldStatus.equals(newStatus);
     }
 
     public static Ticket unwrapTicket(Long ticketId, Optional<Ticket> optionalTicket) {
