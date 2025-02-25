@@ -9,12 +9,18 @@ import org.springframework.data.repository.query.Param;
 
 import com.codelogium.ticketing.entity.Ticket;
 import com.codelogium.ticketing.entity.User;
+import com.codelogium.ticketing.entity.enums.Status;
 
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
+
     Optional<Ticket> findByIdAndCreatorId(Long ticketId, Long userId);
 
     List<Ticket> findByCreatorId(Long userId);
-
+    // Find creator by ticket id to validates user in this and sub-level
     @Query("SELECT t.creator FROM Ticket t WHERE t.id = :ticketId")
     Optional<User> findCreatorByTicket(@Param("ticketId") Long ticketId);
+
+    // Search by Ticket ID (if provided) and Status (if provided)
+    @Query("SELECT t FROM Ticket t WHERE (:ticketId IS NULL OR t.id = :ticketId) AND (:status IS NULL OR t.status = :status)")
+    List<Ticket> findByTicketIdAndStatus(@Param("ticketId") Long ticketId, @Param("status") Status status);
 }
