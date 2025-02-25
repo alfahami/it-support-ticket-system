@@ -3,6 +3,7 @@ package com.codelogium.ticketing.web;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,5 +37,12 @@ public class CommentController {
     @GetMapping("/{commentId}")
     public ResponseEntity<Comment> retrieveComment(@PathVariable Long commentId, @PathVariable Long ticketId, @PathVariable Long userId) {
         return ResponseEntity.ok(commentService.retrieveComment(userId, ticketId, commentId));
+    }
+
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<HttpStatus> removeComment(@PathVariable Long commentId, @PathVariable Long ticketId, @PathVariable Long userId) {
+        commentService.removeComment(userId, ticketId, commentId);
+        
+        return ResponseEntity.noContent().build();
     }
 }
