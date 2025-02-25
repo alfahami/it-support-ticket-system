@@ -42,7 +42,7 @@ public class TicketServiceImp implements TicketService {
                 null,
                 createdTicket.getId(),
                 userId,
-                "TICKET_CREATED",
+                "NEW",
                 null,
                 createdTicket.getStatus().toString(),
                 Instant.now()));
