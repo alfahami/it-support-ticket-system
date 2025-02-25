@@ -36,21 +36,20 @@ public class TicketServiceImp implements TicketService {
         newTicket.setTimestamp(Instant.now());
 
         Ticket createdTicket = ticketRepository.save(newTicket);
-        
+
         // Log ticket creation
         auditLogRepository.save(new AuditLog(
-                            null, 
-                            createdTicket.getId(), 
-                            userId, 
-                            "TICKET_CREATED", 
-                            null,
-                            createdTicket.getStatus().toString(), 
-                            Instant.now()));
+                null,
+                createdTicket.getId(),
+                userId,
+                "TICKET_CREATED",
+                null,
+                createdTicket.getStatus().toString(),
+                Instant.now()));
 
         auditLogRepository.flush(); // Ensure immediate persistence
 
         return createdTicket;
-
     }
 
     @Transactional
@@ -77,13 +76,13 @@ public class TicketServiceImp implements TicketService {
         // Log status change if only there's an actual modification
         if (isStatusChanged(oldStatus, newTicket.getStatus())) {
             auditLogRepository.save(new AuditLog(
-                            null, 
-                            ticketId,
-                            userId,
-                            "STATUS_UPDATED",
-                            oldStatus.toString(),
-                            newTicket.getStatus().toString(), 
-                            Instant.now()));
+                    null,
+                    ticketId,
+                    userId,
+                    "STATUS_UPDATED",
+                    oldStatus.toString(),
+                    newTicket.getStatus().toString(),
+                    Instant.now()));
 
             auditLogRepository.flush(); // Ensure immediate persistence
 
@@ -107,6 +106,14 @@ public class TicketServiceImp implements TicketService {
     @Override
     public List<Ticket> searchTickets(Long ticketId, Status status) {
         return ticketRepository.findByTicketIdAndStatus(ticketId, status);
+    }
+
+    @Override
+    public List<AuditLog> retrieveAuditLogs(Long ticketId, Long userId) {
+        // Verify user existance by checking the creator relationship
+        UserServiceImp.unwrapUser(userId, ticketRepository.findCreatorByTicket(ticketId));
+
+        return auditLogRepository.findByTicketId(ticketId);
     }
 
     @Override
