@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.codelogium.ticketing.exception.ResourceNotFoundException;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,8 +18,16 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         try {
             filterChain.doFilter(request, response);
-        } catch (RuntimeException e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);            
+        } catch(ResourceNotFoundException e) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);  
+            response.getWriter().write("Username doesn't exist");  
+            response.getWriter().flush();  
+        }
+        
+        catch (RuntimeException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);  
+            response.getWriter().write("BAD REQUEST");  
+            response.getWriter().flush();        
         }
         
     }
