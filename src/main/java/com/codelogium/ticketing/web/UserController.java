@@ -25,7 +25,7 @@ public class UserController {
     private UserService userService;
 
     // We could use UserDTO and AuthController in order to filter and not send username, passoword and other sensitive data but let's just send 201 Http status creation
-    @PostMapping("/register")
+    @PostMapping
     public ResponseEntity<String> registerUser(@RequestBody @Valid User user) {
         userService.createUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
