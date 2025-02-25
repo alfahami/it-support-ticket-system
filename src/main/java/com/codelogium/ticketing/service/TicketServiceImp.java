@@ -36,8 +36,8 @@ public class TicketServiceImp implements TicketService {
         newTicket.setTimestamp(Instant.now());
 
         Ticket createdTicket = ticketRepository.save(newTicket);
-        // Log status change if only there's an actual modification
-
+        
+        // Log ticket creation
         auditLogRepository.save(new AuditLog(
                             null, 
                             createdTicket.getId(), 
@@ -84,7 +84,7 @@ public class TicketServiceImp implements TicketService {
                             oldStatus.toString(),
                             newTicket.getStatus().toString(), 
                             Instant.now()));
-                            
+
             auditLogRepository.flush(); // Ensure immediate persistence
 
         }
