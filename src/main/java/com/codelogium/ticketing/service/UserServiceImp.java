@@ -30,6 +30,12 @@ public class UserServiceImp implements UserService {
         return unwrapUser(userId, userRepository.findById(userId));
     }
 
+    // Retrieves a user based on username
+    @Override
+    public User retrieveUser(String username) {
+        return unwrapUser(404L, userRepository.findByUsername(username));
+    }
+
     @Override
     public void removeUser(Long userId) {
         User retrievedUser = unwrapUser(userId, userRepository.findById(userId));
