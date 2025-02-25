@@ -7,7 +7,10 @@ import com.codelogium.ticketing.entity.enums.UserRole;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -30,18 +33,22 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     @NotBlank(message = "Username cannot be null or blank")
     @Size(min = 5, max = 8, message = "Username must be between 5 and 8 characters")
     private String username;
 
+    @Column(nullable = false)
     @NotBlank(message = "Password cannot be null or blank")
     @Size(min = 6, message = "Password must be at least 6 characters long")
     private String password;
 
     @NotBlank(message = "Email cannot be null or blank")
+    @Column(nullable = false)
     @Email(message = "Invalid email format")
     private String email;
 
+    @Enumerated(EnumType.STRING)
     private UserRole role;
 
     @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL, orphanRemoval = true)
