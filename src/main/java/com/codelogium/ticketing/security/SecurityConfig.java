@@ -17,7 +17,7 @@ import lombok.AllArgsConstructor;
 @Configuration
 @AllArgsConstructor
 public class SecurityConfig {
-    
+
     CustomAuthenticationManager CustomAuthenticationManager;
 
     @Bean
@@ -26,18 +26,15 @@ public class SecurityConfig {
         // setting the uri for our authentication
         authenticationFilter.setFilterProcessesUrl("/user/authenticate");
         http
-            .headers().frameOptions().disable()
-            .and()
-            .csrf().disable()
-            .authorizeRequests()
-            .requestMatchers("/h2-console/**").permitAll()
+            .headers(headers -> headers.disable())
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(authorize -> authorize  
             .requestMatchers(HttpMethod.POST, SecurityConstants.REGISTER_PATH).permitAll()
-            .anyRequest().authenticated()
-            .and()
+            .anyRequest().authenticated())
             .addFilterBefore(new ExceptionHandlerFilter(), AuthenticationFilter.class) // first filter to run before any filter
             .addFilter(authenticationFilter)
             .addFilterAfter(new JWTAuthorizationFilter(), AuthenticationFilter.class)
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
             return http.build();
     }
