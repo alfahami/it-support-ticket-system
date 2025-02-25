@@ -34,7 +34,23 @@ public class TicketServiceImp implements TicketService {
         User user = UserServiceImp.unwrapUser(userId, userRepository.findById(userId));
         newTicket.setCreator(user);
         newTicket.setTimestamp(Instant.now());
-        return ticketRepository.save(newTicket);
+
+        Ticket createdTicket = ticketRepository.save(newTicket);
+        // Log status change if only there's an actual modification
+
+        auditLogRepository.save(new AuditLog(
+                            null, 
+                            createdTicket.getId(), 
+                            userId, 
+                            "TICKET_CREATED", 
+                            null,
+                            createdTicket.getStatus().toString(), 
+                            Instant.now()));
+
+        auditLogRepository.flush(); // Ensure immediate persistence
+
+        return createdTicket;
+
     }
 
     @Transactional
@@ -60,14 +76,19 @@ public class TicketServiceImp implements TicketService {
 
         // Log status change if only there's an actual modification
         if (isStatusChanged(oldStatus, newTicket.getStatus())) {
-            auditLogRepository.save(new AuditLog(null, ticketId, userId, "STATUS_UPDATED", oldStatus.toString(),
-                    newTicket.getStatus().toString(), Instant.now()));
+            auditLogRepository.save(new AuditLog(
+                            null, 
+                            ticketId,
+                            userId,
+                            "STATUS_UPDATED",
+                            oldStatus.toString(),
+                            newTicket.getStatus().toString(), 
+                            Instant.now()));
+                            
             auditLogRepository.flush(); // Ensure immediate persistence
 
         }
-
         return retrievedTicket;
-
     }
 
     @Override
