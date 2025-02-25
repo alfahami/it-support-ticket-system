@@ -7,6 +7,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
+import com.codelogium.ticketing.security.filter.AuthenticationFilter;
+
 import lombok.AllArgsConstructor;
 
 @Configuration
@@ -15,6 +17,9 @@ public class SecurityConfig {
     
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        AuthenticationFilter authenticationFilter = new AuthenticationFilter();
+        // setting the uri for our authentication
+        authenticationFilter.setFilterProcessesUrl("/user/authenticate");
         http
             .headers().frameOptions().disable()
             .and()
@@ -24,6 +29,7 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.POST, SecurityConstants.REGISTER_PATH).permitAll()
             .anyRequest().authenticated()
             .and()
+            .addFilter(authenticationFilter)
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
             return http.build();
