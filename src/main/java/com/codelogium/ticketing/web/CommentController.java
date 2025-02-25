@@ -3,6 +3,7 @@ package com.codelogium.ticketing.web;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,5 +31,10 @@ public class CommentController {
     @PatchMapping("/{commentId}")
     public ResponseEntity<Comment> updateComment(@PathVariable Long commentId, @PathVariable Long ticketId, @PathVariable Long userId, @RequestBody @Valid Comment newComment) {
         return ResponseEntity.ok(commentService.updateComment(commentId, ticketId, userId, newComment));
+    }
+
+    @GetMapping("/{commentId}")
+    public ResponseEntity<Comment> retrieveComment(@PathVariable Long commentId, @PathVariable Long ticketId, @PathVariable Long userId) {
+        return ResponseEntity.ok(commentService.retrieveComment(userId, ticketId, commentId));
     }
 }
