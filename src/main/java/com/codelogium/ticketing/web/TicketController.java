@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codelogium.ticketing.entity.Ticket;
+import com.codelogium.ticketing.entity.enums.Status;
 import com.codelogium.ticketing.service.TicketService;
 
 import jakarta.validation.Valid;
@@ -45,6 +47,11 @@ public class TicketController {
     @GetMapping("/all")
     public ResponseEntity<List<Ticket>> retrieveAllTicketsByCreator(@PathVariable Long userId) {
         return ResponseEntity.ok(ticketService.retrieveTicketsByCreator(userId));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Ticket>> searchTickets(@RequestParam(required = false) Long ticketId, @RequestParam(required = false) Status status) {
+        return ResponseEntity.ok(ticketService.searchTickets(ticketId, status));
     }
 
     @DeleteMapping("/{ticketId}")
