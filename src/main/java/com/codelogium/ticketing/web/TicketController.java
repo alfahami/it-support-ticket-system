@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.codelogium.ticketing.entity.AuditLog;
 import com.codelogium.ticketing.entity.Ticket;
 import com.codelogium.ticketing.entity.enums.Status;
 import com.codelogium.ticketing.service.TicketService;
@@ -52,6 +53,11 @@ public class TicketController {
     @GetMapping("/search")
     public ResponseEntity<List<Ticket>> searchTickets(@RequestParam(required = false) Long ticketId, @RequestParam(required = false) Status status) {
         return ResponseEntity.ok(ticketService.searchTickets(ticketId, status));
+    }
+
+    @GetMapping("/{ticketId}/audit-logs")
+    public ResponseEntity<List<AuditLog>> retrieveAuditLogs(@PathVariable Long ticketId) {
+        return ResponseEntity.ok(ticketService.retrieveAuditLogs(ticketId, ticketId));
     }
 
     @DeleteMapping("/{ticketId}")
