@@ -69,6 +69,17 @@ public class CommentServiceImp implements CommentService {
         return retrievedComment;
     }
 
+    @Override
+    public void removeComment(Long userId, Long ticketId, Long commentId) {
+        UserServiceImp.unwrapUser(userId, ticketRepository.findCreatorByTicket(ticketId));
+
+        TicketServiceImp.unwrapTicket(ticketId, ticketRepository.findByIdAndCreatorId(ticketId, userId));
+
+        Comment retrievedComment = unwrapComment(commentId, commentRepository.findByIdAndTicketIdAndAuthorId(commentId, ticketId, userId));
+
+        commentRepository.delete(retrievedComment);
+    }
+
     public static Comment unwrapComment(Long commentId, Optional<Comment> optionalComment) {
         return optionalComment.orElseThrow(() -> new ResourceNotFoundException(commentId, Comment.class));
     }
