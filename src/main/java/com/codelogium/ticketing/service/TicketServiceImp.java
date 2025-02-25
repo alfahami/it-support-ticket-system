@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.codelogium.ticketing.entity.Ticket;
 import com.codelogium.ticketing.entity.User;
+import com.codelogium.ticketing.entity.enums.Status;
 import com.codelogium.ticketing.exception.ResourceNotFoundException;
 import com.codelogium.ticketing.repository.TicketRepository;
 import com.codelogium.ticketing.repository.UserRepository;
@@ -57,6 +58,11 @@ public class TicketServiceImp implements TicketService {
     public List<Ticket> retrieveTicketsByCreator(Long userId) {
         UserServiceImp.unwrapUser(userId, ticketRepository.findCreatorByTicket(userId));
         return ticketRepository.findByCreatorId(userId);
+    }
+
+    @Override
+    public List<Ticket> searchTickets(Long ticketId, Status status) {
+        return ticketRepository.findByTicketIdAndStatus(ticketId, status);
     }
 
     @Override
