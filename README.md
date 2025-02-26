@@ -20,7 +20,7 @@ This project uses **H2**, an in-memory database for development and testing.
 
 #### **H2 Console Access**
 Visit `http://localhost:8080/h2-console`
-- **JDBC URL:** `jdbc:h2:mem:testdb`
+- **JDBC URL:** `jdbc:h2:mem:ticketing`
 - **Username:** `sa`
 - **Password:** (leave empty by default)
 
