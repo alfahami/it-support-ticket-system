@@ -9,14 +9,12 @@ The **IT Support Ticket System API** provides a platform for employees to create
 ## Setup
 ### **1. Clone the Repository**
 ```sh
-git clone <repository-url>
+git clone git@github.com:alfahami/it-support-ticket-system.git
 cd it-support-ticket-system
 ```
 
 ### **2. Configure Database (H2 In-Memory Database)**
 This project uses **H2**, an in-memory database for development and testing.
-- No external configuration is needed.
-- The database is reset upon each restart.
 
 #### **H2 Console Access**
 Visit `http://localhost:8080/h2-console`
