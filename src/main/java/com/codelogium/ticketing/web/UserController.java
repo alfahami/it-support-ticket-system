@@ -3,39 +3,56 @@ package com.codelogium.ticketing.web;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.codelogium.ticketing.entity.User;
+import com.codelogium.ticketing.exception.ErrorResponse;
 import com.codelogium.ticketing.service.UserService;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @RestController
 @AllArgsConstructor
+@Tag(name = "User Controller", description = "Manages user operations")
 @RequestMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
-    
-    private UserService userService;
 
-    // We could use UserDTO and AuthController in order to filter and not send username, passoword and other sensitive data but let's just send 201 Http status creation
+    private final UserService userService;
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "User successfully created"),
+            @ApiResponse(responseCode = "400", description = "Bad Request: Unsuccessful submission")
+    })
+    @Operation(summary = "Create User", description = "Registers a new user")
     @PostMapping
     public ResponseEntity<String> registerUser(@RequestBody @Valid User user) {
         userService.createUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User successfully retrieved", content = @Content(schema = @Schema(implementation = User.class))),
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @Operation(summary = "Get User", description = "Retrieves a user by ID")
     @GetMapping("/{userId}")
     public ResponseEntity<User> retrieveUser(@PathVariable Long userId) {
         return ResponseEntity.ok(userService.retrieveUser(userId));
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "User successfully deleted"),
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @Operation(summary = "Delete User", description = "Deletes a user by ID")
     @DeleteMapping("/{userId}")
     public ResponseEntity<HttpStatus> removeUser(@PathVariable Long userId) {
         userService.removeUser(userId);
