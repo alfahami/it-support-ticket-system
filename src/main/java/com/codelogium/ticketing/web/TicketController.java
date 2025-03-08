@@ -51,6 +51,8 @@ public class TicketController {
         return ResponseEntity.ok(ticketService.retrieveTicket(ticketId, userId));
     }
 
+    //TODO: Implement Update Ticket Handler
+
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Audit logs successfully retrieved", content = @Content(schema = @Schema(implementation = AuditLog.class))),
             @ApiResponse(responseCode = "404", description = "Ticket not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
@@ -68,6 +70,7 @@ public class TicketController {
     @Operation(summary = "Delete Ticket", description = "Deletes a ticket by ID")
     @DeleteMapping("/{ticketId}")
     public ResponseEntity<HttpStatus> removeTicket(@PathVariable Long userId, @PathVariable Long ticketId) {
+        // TODO: fix the swapped uri path variable
         ticketService.removeTicket(userId, ticketId);
         return ResponseEntity.noContent().build();
     }

@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
+// TODO: make sure path variable IDs 
 @RestController
 @AllArgsConstructor
 @Tag(name = "Comment Controller", description = "Manages comments on tickets")
