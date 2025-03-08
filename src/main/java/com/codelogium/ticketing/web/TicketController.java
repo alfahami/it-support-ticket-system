@@ -51,7 +51,10 @@ public class TicketController {
         return ResponseEntity.ok(ticketService.retrieveTicket(ticketId, userId));
     }
 
-    //TODO: Implement Update Ticket Handler
+    @PatchMapping("/{ticketId}")
+    public ResponseEntity<Ticket> updateTicketInfo(@PathVariable Long ticketId, @PathVariable Long userId, @RequestBody @Valid Ticket newTicket) {
+        return ResponseEntity.ok(ticketService.updateTicketInfo(ticketId, userId, newTicket));
+    }
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Audit logs successfully retrieved", content = @Content(schema = @Schema(implementation = AuditLog.class))),

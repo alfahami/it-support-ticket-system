@@ -33,6 +33,7 @@ public class TicketServiceImp implements TicketService {
     public Ticket createTicket(Long userId, Ticket newTicket) {
         User user = UserServiceImp.unwrapUser(userId, userRepository.findById(userId));
         newTicket.setCreator(user);
+        newTicket.setStatus(Status.NEW); // default status 
         newTicket.setTimestamp(Instant.now());
 
         Ticket createdTicket = ticketRepository.save(newTicket);
@@ -52,41 +53,42 @@ public class TicketServiceImp implements TicketService {
         return createdTicket;
     }
 
+    // Update Ticket by th
     @Transactional
     @Override
-    public Ticket updateTicket(Long ticketId, Long userId, Ticket newTicket) {
+    public Ticket updateTicketInfo(Long ticketId, Long userId, Ticket newTicket) {
         // Verify user existance by checking the creator relationship
-        UserServiceImp.unwrapUser(userId, ticketRepository.findCreatorByTicket(ticketId));
+        User user = UserServiceImp.unwrapUser(userId, userRepository.findById(userId));
 
         // Get the ticket and verify it belongs to this user
         Ticket retrievedTicket = unwrapTicket(ticketId, ticketRepository.findByIdAndCreatorId(ticketId, userId));
 
         // Store old status before making changes
-        Status oldStatus = retrievedTicket.getStatus();
+        // Status oldStatus = retrievedTicket.getStatus();
 
         updateIfNotNull(retrievedTicket::setTitle, newTicket.getTitle());
         updateIfNotNull(retrievedTicket::setDescription, newTicket.getDescription());
         updateIfNotNull(retrievedTicket::setCategory, newTicket.getCategory());
         updateIfNotNull(retrievedTicket::setPriority, newTicket.getPriority());
-        updateIfNotNull(retrievedTicket::setStatus, newTicket.getStatus());
+        // updateIfNotNull(retrievedTicket::setStatus, newTicket.getStatus());
 
         // Save ticket update
         ticketRepository.save(retrievedTicket);
 
         // Log status change if only there's an actual modification
-        if (isStatusChanged(oldStatus, newTicket.getStatus())) {
-            auditLogRepository.save(new AuditLog(
-                    null,
-                    ticketId,
-                    userId,
-                    "STATUS_UPDATED",
-                    oldStatus.toString(),
-                    newTicket.getStatus().toString(),
-                    Instant.now()));
+        // if (isStatusChanged(oldStatus, newTicket.getStatus())) {
+        //     auditLogRepository.save(new AuditLog(
+        //             null,
+        //             ticketId,
+        //             userId,
+        //             "STATUS_UPDATED",
+        //             oldStatus.toString(),
+        //             newTicket.getStatus().toString(),
+        //             Instant.now()));
 
-            auditLogRepository.flush(); // Ensure immediate persistence
+        //     auditLogRepository.flush(); // Ensure immediate persistence
 
-        }
+        // }
         return retrievedTicket;
     }
 
