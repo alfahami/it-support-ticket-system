@@ -30,7 +30,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorize -> authorize  
             .requestMatchers(HttpMethod.POST, SecurityConstants.REGISTER_PATH).permitAll()
-            .requestMatchers("/swagger-ui/*", "/api-docs/**").permitAll() // allows swagger ui to public user
+            .requestMatchers("/swagger-ui/*", "/api-docs/**", "/h2-console/*").permitAll() // allows swagger ui to public user
             .anyRequest().authenticated())
             .addFilterBefore(new ExceptionHandlerFilter(), AuthenticationFilter.class) // first filter to run before any filter
             .addFilter(authenticationFilter)
