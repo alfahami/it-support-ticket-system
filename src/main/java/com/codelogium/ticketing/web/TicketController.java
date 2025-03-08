@@ -5,6 +5,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.codelogium.ticketing.dto.TicketInfoUpdateDTO;
+import com.codelogium.ticketing.dto.TicketStatusUpdateDTO;
 import com.codelogium.ticketing.entity.AuditLog;
 import com.codelogium.ticketing.entity.Ticket;
 import com.codelogium.ticketing.exception.ErrorResponse;
@@ -51,9 +53,16 @@ public class TicketController {
         return ResponseEntity.ok(ticketService.retrieveTicket(ticketId, userId));
     }
 
-    @PatchMapping("/{ticketId}")
-    public ResponseEntity<Ticket> updateTicketInfo(@PathVariable Long ticketId, @PathVariable Long userId, @RequestBody @Valid Ticket newTicket) {
-        return ResponseEntity.ok(ticketService.updateTicketInfo(ticketId, userId, newTicket));
+    //TODO: to be run only by employees
+    @PatchMapping("/{ticketId}/info")
+    public ResponseEntity<Ticket> updateTicketInfo(@PathVariable Long ticketId, @PathVariable Long userId, @RequestBody @Valid TicketInfoUpdateDTO dto) {
+        return ResponseEntity.ok(ticketService.updateTicketInfo(ticketId, userId, dto));
+    }
+
+    // TODO: to be run by IT Support
+    @PatchMapping("/{ticketId}/status")
+    public ResponseEntity<Ticket> updateTicketStatus(@PathVariable Long ticketId, @PathVariable Long userId, @RequestBody @Valid TicketStatusUpdateDTO dto) {
+        return ResponseEntity.ok(ticketService.updateTicketStatus(ticketId, userId, dto));
     }
 
     @ApiResponses(value = {

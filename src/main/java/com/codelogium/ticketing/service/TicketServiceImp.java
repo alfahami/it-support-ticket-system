@@ -6,6 +6,8 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.codelogium.ticketing.dto.TicketInfoUpdateDTO;
+import com.codelogium.ticketing.dto.TicketStatusUpdateDTO;
 import com.codelogium.ticketing.entity.AuditLog;
 import com.codelogium.ticketing.entity.Ticket;
 import com.codelogium.ticketing.entity.User;
@@ -34,7 +36,7 @@ public class TicketServiceImp implements TicketService {
         User user = UserServiceImp.unwrapUser(userId, userRepository.findById(userId));
         newTicket.setCreator(user);
         newTicket.setStatus(Status.NEW); // default status 
-        newTicket.setTimestamp(Instant.now());
+        newTicket.setCreationDate(Instant.now());
 
         Ticket createdTicket = ticketRepository.save(newTicket);
 
@@ -53,43 +55,56 @@ public class TicketServiceImp implements TicketService {
         return createdTicket;
     }
 
-    // Update Ticket by th
+    // Update Ticket by the creator
     @Transactional
     @Override
-    public Ticket updateTicketInfo(Long ticketId, Long userId, Ticket newTicket) {
-        // Verify user existance by checking the creator relationship
-        User user = UserServiceImp.unwrapUser(userId, userRepository.findById(userId));
+    public Ticket updateTicketInfo(Long ticketId, Long userId, TicketInfoUpdateDTO dto) {
+        // Verify user existS
+        UserServiceImp.unwrapUser(userId, userRepository.findById(userId));
 
         // Get the ticket and verify it belongs to this user
         Ticket retrievedTicket = unwrapTicket(ticketId, ticketRepository.findByIdAndCreatorId(ticketId, userId));
 
+        updateIfNotNull(retrievedTicket::setTitle, dto.getTitle());
+        updateIfNotNull(retrievedTicket::setDescription, dto.getDescription());
+        updateIfNotNull(retrievedTicket::setCategory, dto.getCategory());
+        updateIfNotNull(retrievedTicket::setPriority, dto.getPriority());
+
+        // Save ticket update 
+        return ticketRepository.save(retrievedTicket);
+
+    }
+    
+    @Transactional
+    @Override
+    public Ticket updateTicketStatus(Long ticketId, Long userId, TicketStatusUpdateDTO dto) {
+        // validate user exists
+        UserServiceImp.unwrapUser(userId, userRepository.findById(userId));
+
+        // unwrap ticket
+        Ticket retrievedTicket = unwrapTicket(ticketId, ticketRepository.findByIdAndCreatorId(ticketId, userId));
+        
         // Store old status before making changes
-        // Status oldStatus = retrievedTicket.getStatus();
+        Status oldStatus = retrievedTicket.getStatus();
 
-        updateIfNotNull(retrievedTicket::setTitle, newTicket.getTitle());
-        updateIfNotNull(retrievedTicket::setDescription, newTicket.getDescription());
-        updateIfNotNull(retrievedTicket::setCategory, newTicket.getCategory());
-        updateIfNotNull(retrievedTicket::setPriority, newTicket.getPriority());
-        // updateIfNotNull(retrievedTicket::setStatus, newTicket.getStatus());
-
-        // Save ticket update
-        ticketRepository.save(retrievedTicket);
-
+        updateIfNotNull(retrievedTicket::setStatus, dto.getStatus());
+        
+        Ticket savedTicket = ticketRepository.save(retrievedTicket);
         // Log status change if only there's an actual modification
-        // if (isStatusChanged(oldStatus, newTicket.getStatus())) {
-        //     auditLogRepository.save(new AuditLog(
-        //             null,
-        //             ticketId,
-        //             userId,
-        //             "STATUS_UPDATED",
-        //             oldStatus.toString(),
-        //             newTicket.getStatus().toString(),
-        //             Instant.now()));
+        if (isStatusChanged(oldStatus, dto.getStatus())) {
+            auditLogRepository.save(new AuditLog(
+                    null,
+                    ticketId,
+                    userId,
+                    "STATUS_UPDATED",
+                    oldStatus.toString(),
+                    dto.getStatus().toString(),
+                    Instant.now()));
 
-        //     auditLogRepository.flush(); // Ensure immediate persistence
+            auditLogRepository.flush(); // Ensure immediate persistence
 
-        // }
-        return retrievedTicket;
+        }
+        return savedTicket;
     }
 
     @Override
