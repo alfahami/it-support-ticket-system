@@ -54,12 +54,22 @@ public class TicketController {
     }
 
     //TODO: to be run only by employees
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Ticket successfully updated", content = @Content(schema = @Schema(implementation = Ticket.class))),
+        @ApiResponse(responseCode = "404", description = "Ticket not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @Operation(summary = "Update Ticket Info",  description="Updat an existing ticket's details")
     @PatchMapping("/{ticketId}/info")
     public ResponseEntity<Ticket> updateTicketInfo(@PathVariable Long ticketId, @PathVariable Long userId, @RequestBody @Valid TicketInfoUpdateDTO dto) {
         return ResponseEntity.ok(ticketService.updateTicketInfo(ticketId, userId, dto));
     }
 
     // TODO: to be run by IT Support
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Ticket successfully updated", content = @Content(schema = @Schema(implementation = Ticket.class))),
+        @ApiResponse(responseCode = "404", description = "Ticket not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @Operation(summary = "Update Ticket Status",  description="Update an existing ticket's status")
     @PatchMapping("/{ticketId}/status")
     public ResponseEntity<Ticket> updateTicketStatus(@PathVariable Long ticketId, @PathVariable Long userId, @RequestBody @Valid TicketStatusUpdateDTO dto) {
         return ResponseEntity.ok(ticketService.updateTicketStatus(ticketId, userId, dto));
