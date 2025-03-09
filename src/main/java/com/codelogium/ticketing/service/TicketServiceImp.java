@@ -35,7 +35,7 @@ public class TicketServiceImp implements TicketService {
     public Ticket createTicket(Long userId, Ticket newTicket) {
         User user = UserServiceImp.unwrapUser(userId, userRepository.findById(userId));
         newTicket.setCreator(user);
-        newTicket.setStatus(Status.NEW); // default status 
+        newTicket.setStatus(Status.NEW); // default status
         newTicket.setCreationDate(Instant.now());
 
         Ticket createdTicket = ticketRepository.save(newTicket);
@@ -70,25 +70,25 @@ public class TicketServiceImp implements TicketService {
         updateIfNotNull(retrievedTicket::setCategory, dto.getCategory());
         updateIfNotNull(retrievedTicket::setPriority, dto.getPriority());
 
-        // Save ticket update 
+        // Save ticket update
         return ticketRepository.save(retrievedTicket);
 
     }
-    
+
     @Transactional
     @Override
     public Ticket updateTicketStatus(Long ticketId, Long userId, TicketStatusUpdateDTO dto) {
         // validate user exists
         UserServiceImp.unwrapUser(userId, userRepository.findById(userId));
 
-        // unwrap ticket
+        // Get the ticket and verify it belongs to this user
         Ticket retrievedTicket = unwrapTicket(ticketId, ticketRepository.findByIdAndCreatorId(ticketId, userId));
-        
+
         // Store old status before making changes
         Status oldStatus = retrievedTicket.getStatus();
 
         updateIfNotNull(retrievedTicket::setStatus, dto.getStatus());
-        
+
         Ticket savedTicket = ticketRepository.save(retrievedTicket);
         // Log status change if only there's an actual modification
         if (isStatusChanged(oldStatus, dto.getStatus())) {
@@ -109,6 +109,7 @@ public class TicketServiceImp implements TicketService {
 
     @Override
     public Ticket retrieveTicket(Long ticketId, Long userId) {
+
         UserServiceImp.unwrapUser(userId, ticketRepository.findCreatorByTicket(ticketId));
 
         return unwrapTicket(ticketId, ticketRepository.findByIdAndCreatorId(ticketId, userId));
@@ -135,10 +136,19 @@ public class TicketServiceImp implements TicketService {
 
     @Override
     public void removeTicket(Long ticketId, Long userId) {
+        // validate user exists
         UserServiceImp.unwrapUser(userId, userRepository.findById(userId));
+
+        User user = UserServiceImp.unwrapUser(userId, ticketRepository.findCreatorByTicket(ticketId));
+
+        // Get the ticket
         Ticket ticket = unwrapTicket(ticketId, ticketRepository.findByIdAndCreatorId(ticketId, userId));
 
-        ticketRepository.delete(ticket);
+        user.getTickets().remove(ticket); // remove ticket from the user's list before updating
+
+        // ticketRepository.delete(ticket);
+
+        userRepository.save(user); // Save user to updated reference, this will trigger orphanRemoval thus no need to manually delete the ticket from tickerRepository 
     }
 
     private boolean isStatusChanged(Status oldStatus, Status newStatus) {
