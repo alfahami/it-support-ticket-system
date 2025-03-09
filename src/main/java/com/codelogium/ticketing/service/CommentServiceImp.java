@@ -67,12 +67,24 @@ public class CommentServiceImp implements CommentService {
 
         Comment retrievedComment = unwrapComment(commentId,
                 commentRepository.findByIdAndTicketIdAndAuthorId(commentId, ticketId, userId));
-
-        // TODO: timestamp should be automatically changed when the user has made some
-        // changes
         updateIfNotNull(retrievedComment::setContent, newComment.getContent());
         updateIfNotNull(retrievedComment::setTicket, newComment.getTicket());
 
+        // if the user changed the content of the comment, update the timestamp
+        if (newComment.getContent().equals(retrievedComment.getContent())) {
+            updateIfNotNull(retrievedComment::setCreatedAt, Instant.now());
+            // Log ticket creation
+            auditLogRepository.save(new AuditLog(
+                    null,
+                    retrievedComment.getId(),
+                    userId,
+                    "COMMENT_UPDATED",
+                    retrievedComment.getContent(),
+                    newComment.getContent(),
+                    Instant.now()));
+
+            auditLogRepository.flush(); // Ensure immediate persistence
+        }
         return commentRepository.save(retrievedComment);
     }
 
@@ -94,7 +106,8 @@ public class CommentServiceImp implements CommentService {
     public void removeComment(Long commentId, Long ticketId, Long userId) {
         // Check user exists
         validateUser(userId);
-        Ticket retrievedTicket = TicketServiceImp.unwrapTicket(ticketId, ticketRepository.findByIdAndCreatorId(ticketId, userId));
+        Ticket retrievedTicket = TicketServiceImp.unwrapTicket(ticketId,
+                ticketRepository.findByIdAndCreatorId(ticketId, userId));
 
         Comment retrievedComment = unwrapComment(commentId,
                 commentRepository.findByIdAndTicketIdAndAuthorId(commentId, ticketId, userId));
@@ -106,10 +119,13 @@ public class CommentServiceImp implements CommentService {
 
     // We're just validating, not actually querying and extracting the db
     /*
-     * Possible to dedicate an entity validation service, that would centralize validation but nothing complex here, thus the duplication method in ticket service and comment service
+     * Possible to dedicate an entity validation service, that would centralize
+     * validation but nothing complex here, thus the duplication method in ticket
+     * service and comment service
      */
     private void validateUser(Long userId) {
-        if(!userRepository.existsById(userId)) throw new ResourceNotFoundException(userId, User.class);
+        if (!userRepository.existsById(userId))
+            throw new ResourceNotFoundException(userId, User.class);
     }
 
     public static Comment unwrapComment(Long commentId, Optional<Comment> optionalComment) {
