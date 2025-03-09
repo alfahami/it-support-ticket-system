@@ -32,7 +32,7 @@ public class Comment {
     private String content;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
-    private Instant timestamp;
+    private Instant createdAt;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ticket_id")

@@ -17,6 +17,7 @@ import com.codelogium.ticketing.repository.CommentRepository;
 import com.codelogium.ticketing.repository.TicketRepository;
 import com.codelogium.ticketing.repository.UserRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -30,7 +31,6 @@ public class CommentServiceImp implements CommentService {
 
     @Override
     public Comment createComment(Long ticketId, Long userId, Comment newComment) {
-        // TODO: Think a way of avoiding the mutliple calls of different repository
         User author = UserServiceImp.unwrapUser(userId, userRepository.findById(userId));
 
         // ensure user->ticket relationship
@@ -39,7 +39,7 @@ public class CommentServiceImp implements CommentService {
 
         newComment.setTicket(retrieveTicket);
         newComment.setAuthor(author);
-        newComment.setTimestamp(Instant.now());
+        newComment.setCreatedAt(Instant.now());
         Comment createdComment = commentRepository.save(newComment);
 
         // Log ticket creation
@@ -57,6 +57,7 @@ public class CommentServiceImp implements CommentService {
         return createdComment;
     }
 
+    @Transactional
     @Override
     public Comment updateComment(Long commentId, Long ticketId, Long userId, Comment newComment) {
         // Verify user existance by checking the creator relationship
@@ -69,10 +70,8 @@ public class CommentServiceImp implements CommentService {
 
         // TODO: timestamp should be automatically changed when the user has made some
         // changes
-        updateIfNotNull(retrievedComment::setAuthor, newComment.getAuthor());
         updateIfNotNull(retrievedComment::setContent, newComment.getContent());
         updateIfNotNull(retrievedComment::setTicket, newComment.getTicket());
-        updateIfNotNull(retrievedComment::setTimestamp, newComment.getTimestamp());
 
         return commentRepository.save(retrievedComment);
     }
