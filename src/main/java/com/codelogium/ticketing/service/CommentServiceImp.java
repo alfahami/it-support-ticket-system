@@ -15,6 +15,7 @@ import com.codelogium.ticketing.exception.ResourceNotFoundException;
 import com.codelogium.ticketing.repository.AuditLogRepository;
 import com.codelogium.ticketing.repository.CommentRepository;
 import com.codelogium.ticketing.repository.TicketRepository;
+import com.codelogium.ticketing.repository.UserRepository;
 
 import lombok.AllArgsConstructor;
 
@@ -25,13 +26,17 @@ public class CommentServiceImp implements CommentService {
     private CommentRepository commentRepository;
     private TicketRepository ticketRepository;
     private AuditLogRepository auditLogRepository;
+    private UserRepository userRepository; // only for validation
 
     @Override
     public Comment createComment(Long ticketId, Long userId, Comment newComment) {
-        User author = UserServiceImp.unwrapUser(userId, ticketRepository.findCreatorByTicket(ticketId));
+        // TODO: Think a way of avoiding the mutliple calls of different repository
+        User author = UserServiceImp.unwrapUser(userId, userRepository.findById(userId));
 
+        // ensure user->ticket relationship
         Ticket retrieveTicket = TicketServiceImp.unwrapTicket(ticketId,
                 ticketRepository.findByIdAndCreatorId(ticketId, userId));
+
         newComment.setTicket(retrieveTicket);
         newComment.setAuthor(author);
         newComment.setTimestamp(Instant.now());
@@ -55,7 +60,7 @@ public class CommentServiceImp implements CommentService {
     @Override
     public Comment updateComment(Long commentId, Long ticketId, Long userId, Comment newComment) {
         // Verify user existance by checking the creator relationship
-        UserServiceImp.unwrapUser(userId, ticketRepository.findCreatorByTicket(ticketId));
+        UserServiceImp.unwrapUser(userId, userRepository.findById(userId));
 
         // Get the ticket and verify it belongs to this user
         TicketServiceImp.unwrapTicket(ticketId, ticketRepository.findByIdAndCreatorId(ticketId, userId));
@@ -76,7 +81,7 @@ public class CommentServiceImp implements CommentService {
     @Override
     public Comment retrieveComment(Long userId, Long ticketId, Long commentId) {
         // Verify user existance by checking the creator relationship
-        UserServiceImp.unwrapUser(userId, ticketRepository.findCreatorByTicket(ticketId));
+        UserServiceImp.unwrapUser(userId, userRepository.findById(userId));
 
         // Get the ticket and verify it belongs to this user
         TicketServiceImp.unwrapTicket(ticketId, ticketRepository.findByIdAndCreatorId(ticketId, userId));
@@ -89,15 +94,18 @@ public class CommentServiceImp implements CommentService {
     }
 
     @Override
-    public void removeComment(Long userId, Long ticketId, Long commentId) {
-        UserServiceImp.unwrapUser(userId, ticketRepository.findCreatorByTicket(ticketId));
+    public void removeComment(Long commentId, Long ticketId, Long userId) {
 
-        TicketServiceImp.unwrapTicket(ticketId, ticketRepository.findByIdAndCreatorId(ticketId, userId));
+        UserServiceImp.unwrapUser(userId, userRepository.findById(userId));
+
+        Ticket retrievedTicket = TicketServiceImp.unwrapTicket(ticketId, ticketRepository.findByIdAndCreatorId(ticketId, userId));
 
         Comment retrievedComment = unwrapComment(commentId,
                 commentRepository.findByIdAndTicketIdAndAuthorId(commentId, ticketId, userId));
 
-        commentRepository.delete(retrievedComment);
+        retrievedTicket.getComments().remove(retrievedComment);
+        ticketRepository.save(retrievedTicket); // triggers orphanRemoval on ticket level
+
     }
 
     public static Comment unwrapComment(Long commentId, Optional<Comment> optionalComment) {

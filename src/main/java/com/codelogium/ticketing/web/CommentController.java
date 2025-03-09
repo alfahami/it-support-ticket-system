@@ -26,60 +26,61 @@ import lombok.AllArgsConstructor;
 @RequestMapping(value = "/users/{userId}/tickets/{ticketId}/comments", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CommentController {
 
-    private final CommentService commentService;
+        private final CommentService commentService;
 
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Comment successfully created"),
-            @ApiResponse(responseCode = "400", description = "Bad Request: Unsuccessful submission")
-    })
-    @Operation(summary = "Create Comment", description = "Adds a new comment to a ticket")
-    @PostMapping
-    public ResponseEntity<Comment> createComment(
-            @PathVariable Long userId,
-            @PathVariable Long ticketId,
-            @RequestBody @Valid Comment newComment) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(commentService.createComment(ticketId, userId, newComment));
-    }
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "201", description = "Comment successfully created"),
+                        @ApiResponse(responseCode = "400", description = "Bad Request: Unsuccessful submission")
+        })
+        @Operation(summary = "Create Comment", description = "Adds a new comment to a ticket")
+        @PostMapping
+        public ResponseEntity<Comment> createComment(
+                        @PathVariable Long ticketId,
+                        @PathVariable Long userId,
+                        @RequestBody @Valid Comment newComment) {
+                return ResponseEntity.status(HttpStatus.CREATED)
+                                .body(commentService.createComment(ticketId, userId, newComment));
+        }
 
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Comment successfully updated"),
-            @ApiResponse(responseCode = "404", description = "Comment not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    })
-    @Operation(summary = "Update Comment", description = "Updates an existing comment")
-    @PatchMapping("/{commentId}")
-    public ResponseEntity<Comment> updateComment(
-            @PathVariable Long userId,
-            @PathVariable Long ticketId,
-            @PathVariable Long commentId,
-            @RequestBody @Valid Comment newComment) {
-        return ResponseEntity.ok(commentService.updateComment(commentId, ticketId, userId, newComment));
-    }
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Comment successfully updated"),
+                        @ApiResponse(responseCode = "404", description = "Comment not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+        })
+        @Operation(summary = "Update Comment", description = "Updates an existing comment")
+        @PatchMapping("/{commentId}")
+        public ResponseEntity<Comment> updateComment(
+                        @PathVariable Long commentId,
+                        @PathVariable Long ticketId,
+                        @PathVariable Long userId,
+                        @RequestBody @Valid Comment newComment) {
+                return ResponseEntity.ok(commentService.updateComment(commentId, ticketId, userId, newComment));
+        }
 
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Comment successfully retrieved", content = @Content(schema = @Schema(implementation = Comment.class))),
-            @ApiResponse(responseCode = "404", description = "Comment not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    })
-    @Operation(summary = "Get Comment", description = "Retrieves a comment by ID")
-    @GetMapping("/{commentId}")
-    public ResponseEntity<Comment> retrieveComment(
-            @PathVariable Long userId,
-            @PathVariable Long ticketId,
-            @PathVariable Long commentId) {
-        return ResponseEntity.ok(commentService.retrieveComment(userId, ticketId, commentId));
-    }
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Comment successfully retrieved", content = @Content(schema = @Schema(implementation = Comment.class))),
+                        @ApiResponse(responseCode = "404", description = "Comment not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+        })
+        @Operation(summary = "Get Comment", description = "Retrieves a comment by ID")
+        @GetMapping("/{commentId}")
+        public ResponseEntity<Comment> retrieveComment(
+                        @PathVariable Long commentId,
+                        @PathVariable Long ticketId,
+                        @PathVariable Long userId) {
+                return ResponseEntity.ok(commentService.retrieveComment(userId, ticketId, commentId));
+        }
 
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Comment successfully deleted"),
-            @ApiResponse(responseCode = "404", description = "Comment not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    })
-    @Operation(summary = "Delete Comment", description = "Deletes a comment by ID")
-    @DeleteMapping("/{commentId}")
-    public ResponseEntity<HttpStatus> removeComment(
-            @PathVariable Long userId,
-            @PathVariable Long ticketId,
-            @PathVariable Long commentId) {
-        commentService.removeComment(userId, ticketId, commentId);
-        return ResponseEntity.noContent().build();
-    }
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "204", description = "Comment successfully deleted"),
+                        @ApiResponse(responseCode = "404", description = "Comment not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+        })
+        @Operation(summary = "Delete Comment", description = "Deletes a comment by ID")
+        @DeleteMapping("/{commentId}")
+        public ResponseEntity<HttpStatus> removeComment(
+                @PathVariable Long commentId,
+                @PathVariable Long ticketId,
+                        @PathVariable Long userId
+                        ) {
+                commentService.removeComment(commentId, ticketId, userId);
+                return ResponseEntity.noContent().build();
+        }
 }
