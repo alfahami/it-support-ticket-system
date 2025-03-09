@@ -20,7 +20,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     @Query("SELECT t.creator FROM Ticket t WHERE t.id = :ticketId")
     Optional<User> findCreatorByTicket(@Param("ticketId") Long ticketId);
 
-    // Search by Ticket ID (if provided) and Status (if provided)
-    @Query("SELECT t FROM Ticket t WHERE (:ticketId IS NULL OR t.id = :ticketId) AND (:status IS NULL OR t.status = :status)")
-    List<Ticket> findByTicketIdAndStatus(@Param("ticketId") Long ticketId, @Param("status") Status status);
+    // Search by Ticket ID and Status
+    @Query("SELECT t FROM Ticket t WHERE (t.id = :ticketId) AND (t.status = :status)")
+    Optional<Ticket> findByTicketIdAndStatus(@Param("ticketId") Long ticketId, @Param("status") Status status);
 }

@@ -128,8 +128,12 @@ public class TicketServiceImp implements TicketService {
     }
 
     @Override
-    public List<Ticket> searchTickets(Long ticketId, Status status) {
-        return ticketRepository.findByTicketIdAndStatus(ticketId, status);
+    public Ticket searchTicket(Long ticketId, Long userId, Status status) {
+        validateUser(userId);
+        
+        Ticket ticket = unwrapTicket(ticketId, ticketRepository.findByTicketIdAndStatus(ticketId, status));   
+        
+        return ticket;
     }
 
     @Override

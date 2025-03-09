@@ -16,7 +16,7 @@ public interface TicketService {
     void removeTicket(Long ticketId, Long userid);
     List<Ticket> retrieveTicketsByCreator(Long userId);
 
-    List<Ticket> searchTickets(Long ticketId, Status status);
+    Ticket searchTicket(Long ticketId, Long userId, Status status);
     List<AuditLog> retrieveAuditLogs(Long ticketId, Long userId);
     
 }

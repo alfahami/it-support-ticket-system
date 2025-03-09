@@ -9,6 +9,7 @@ import com.codelogium.ticketing.dto.TicketInfoUpdateDTO;
 import com.codelogium.ticketing.dto.TicketStatusUpdateDTO;
 import com.codelogium.ticketing.entity.AuditLog;
 import com.codelogium.ticketing.entity.Ticket;
+import com.codelogium.ticketing.entity.enums.Status;
 import com.codelogium.ticketing.exception.ErrorResponse;
 import com.codelogium.ticketing.service.TicketService;
 
@@ -84,6 +85,11 @@ public class TicketController {
     @GetMapping("/all")
     public ResponseEntity<List<Ticket>> retrieveTicketsByCreator(@PathVariable Long userId) {
         return ResponseEntity.ok(ticketService.retrieveTicketsByCreator(userId));
+    }
+
+    @GetMapping("{ticketId}/search")
+    public ResponseEntity<Ticket> searchByIdAndStatus(@PathVariable Long ticketId, @PathVariable Long userId, @RequestParam Status status) {
+        return ResponseEntity.ok(ticketService.searchTicket(ticketId, userId, status));
     }
 
     @ApiResponses(value = {
