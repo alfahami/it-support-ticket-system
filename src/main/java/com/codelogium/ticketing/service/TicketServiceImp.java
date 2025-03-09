@@ -154,6 +154,9 @@ public class TicketServiceImp implements TicketService {
     }
 
     // We're just validating, not actually querying and extracting the db
+    /*
+     * Possible to dedicate an entity validation service, that would centralize validation but nothing complex here, thus the duplication method in ticket service and comment service
+     */
     private void validateUser(Long userId) {
         if(!userRepository.existsById(userId)) throw new ResourceNotFoundException(userId, User.class);
     }

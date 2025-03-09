@@ -60,8 +60,7 @@ public class CommentServiceImp implements CommentService {
     @Override
     public Comment updateComment(Long commentId, Long ticketId, Long userId, Comment newComment) {
         // Verify user existance by checking the creator relationship
-        UserServiceImp.unwrapUser(userId, userRepository.findById(userId));
-
+        validateUser(userId);
         // Get the ticket and verify it belongs to this user
         TicketServiceImp.unwrapTicket(ticketId, ticketRepository.findByIdAndCreatorId(ticketId, userId));
 
@@ -81,8 +80,7 @@ public class CommentServiceImp implements CommentService {
     @Override
     public Comment retrieveComment(Long userId, Long ticketId, Long commentId) {
         // Verify user existance by checking the creator relationship
-        UserServiceImp.unwrapUser(userId, userRepository.findById(userId));
-
+        validateUser(userId);
         // Get the ticket and verify it belongs to this user
         TicketServiceImp.unwrapTicket(ticketId, ticketRepository.findByIdAndCreatorId(ticketId, userId));
 
@@ -95,9 +93,8 @@ public class CommentServiceImp implements CommentService {
 
     @Override
     public void removeComment(Long commentId, Long ticketId, Long userId) {
-
-        UserServiceImp.unwrapUser(userId, userRepository.findById(userId));
-
+        // Check user exists
+        validateUser(userId);
         Ticket retrievedTicket = TicketServiceImp.unwrapTicket(ticketId, ticketRepository.findByIdAndCreatorId(ticketId, userId));
 
         Comment retrievedComment = unwrapComment(commentId,
@@ -106,6 +103,14 @@ public class CommentServiceImp implements CommentService {
         retrievedTicket.getComments().remove(retrievedComment);
         ticketRepository.save(retrievedTicket); // triggers orphanRemoval on ticket level
 
+    }
+
+    // We're just validating, not actually querying and extracting the db
+    /*
+     * Possible to dedicate an entity validation service, that would centralize validation but nothing complex here, thus the duplication method in ticket service and comment service
+     */
+    private void validateUser(Long userId) {
+        if(!userRepository.existsById(userId)) throw new ResourceNotFoundException(userId, User.class);
     }
 
     public static Comment unwrapComment(Long commentId, Optional<Comment> optionalComment) {
