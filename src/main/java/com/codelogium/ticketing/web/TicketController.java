@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 
 import jakarta.validation.Valid;
@@ -58,7 +59,7 @@ public class TicketController {
         @ApiResponse(responseCode = "200", description = "Ticket successfully updated", content = @Content(schema = @Schema(implementation = Ticket.class))),
         @ApiResponse(responseCode = "404", description = "Ticket not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    @Operation(summary = "Update Ticket Info",  description="Updat an existing ticket's details")
+    @Operation(summary = "Update Ticket Info",  description="Update an existing ticket's details")
     @PatchMapping("/{ticketId}/info")
     public ResponseEntity<Ticket> updateTicketInfo(@PathVariable Long ticketId, @PathVariable Long userId, @RequestBody @Valid TicketInfoUpdateDTO dto) {
         return ResponseEntity.ok(ticketService.updateTicketInfo(ticketId, userId, dto));
@@ -73,6 +74,16 @@ public class TicketController {
     @PatchMapping("/{ticketId}/status")
     public ResponseEntity<Ticket> updateTicketStatus(@PathVariable Long ticketId, @PathVariable Long userId, @RequestBody @Valid TicketStatusUpdateDTO dto) {
         return ResponseEntity.ok(ticketService.updateTicketStatus(ticketId, userId, dto));
+    }
+
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Tickets successfully retrieved", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Ticket.class)))),
+        @ApiResponse(responseCode = "404", description = "Tickets not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @Operation(summary = "Get All Tickets", description = "Retrieves all user's existing tickets")
+    @GetMapping("/all")
+    public ResponseEntity<List<Ticket>> retrieveTicketsByCreator(@PathVariable Long userId) {
+        return ResponseEntity.ok(ticketService.retrieveTicketsByCreator(userId));
     }
 
     @ApiResponses(value = {

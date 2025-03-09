@@ -119,10 +119,12 @@ public class TicketServiceImp implements TicketService {
 
     @Override
     public List<Ticket> retrieveTicketsByCreator(Long userId) {
-    
-        UserServiceImp.unwrapUser(userId, ticketRepository.findCreatorByTicket(userId));
+        validateUser(userId);
 
-        return ticketRepository.findByCreatorId(userId);
+        List<Ticket> tickets = ticketRepository.findByCreatorId(userId);
+        if( tickets == null || tickets.size() == 0) throw new ResourceNotFoundException("No tickets created yet.");
+
+        return tickets;
     }
 
     @Override
