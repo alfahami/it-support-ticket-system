@@ -6,6 +6,8 @@ import com.codelogium.ticketing.entity.enums.Category;
 import com.codelogium.ticketing.entity.enums.Priority;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -25,7 +27,9 @@ public class TicketInfoUpdateDTO {
     private Instant creationDate;
 
     @NotNull(message = "Category cannot be null")
+    @Enumerated(EnumType.STRING)
     private Category category;
     @NotNull(message = "Priority cannot be null")
+    @Enumerated(EnumType.STRING)
     private Priority priority;
 }
