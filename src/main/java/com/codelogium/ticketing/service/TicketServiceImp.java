@@ -60,7 +60,7 @@ public class TicketServiceImp implements TicketService {
     @Override
     public Ticket updateTicketInfo(Long ticketId, Long userId, TicketInfoUpdateDTO dto) {
         // Verify user existS
-        UserServiceImp.unwrapUser(userId, userRepository.findById(userId));
+        validateUser(userId);
 
         // Get the ticket and verify it belongs to this user
         Ticket retrievedTicket = unwrapTicket(ticketId, ticketRepository.findByIdAndCreatorId(ticketId, userId));
@@ -79,7 +79,7 @@ public class TicketServiceImp implements TicketService {
     @Override
     public Ticket updateTicketStatus(Long ticketId, Long userId, TicketStatusUpdateDTO dto) {
         // validate user exists
-        UserServiceImp.unwrapUser(userId, userRepository.findById(userId));
+        validateUser(userId);
 
         // Get the ticket and verify it belongs to this user
         Ticket retrievedTicket = unwrapTicket(ticketId, ticketRepository.findByIdAndCreatorId(ticketId, userId));
@@ -110,14 +110,18 @@ public class TicketServiceImp implements TicketService {
     @Override
     public Ticket retrieveTicket(Long ticketId, Long userId) {
 
-        UserServiceImp.unwrapUser(userId, ticketRepository.findCreatorByTicket(ticketId));
-
+        // validate user exists
+        validateUser(userId);
+        
+        // ensure relationship user->ticket and retrieved ticket
         return unwrapTicket(ticketId, ticketRepository.findByIdAndCreatorId(ticketId, userId));
     }
 
     @Override
     public List<Ticket> retrieveTicketsByCreator(Long userId) {
+    
         UserServiceImp.unwrapUser(userId, ticketRepository.findCreatorByTicket(userId));
+
         return ticketRepository.findByCreatorId(userId);
     }
 
@@ -137,18 +141,21 @@ public class TicketServiceImp implements TicketService {
     @Override
     public void removeTicket(Long ticketId, Long userId) {
         // validate user exists
-        UserServiceImp.unwrapUser(userId, userRepository.findById(userId));
-
-        User user = UserServiceImp.unwrapUser(userId, ticketRepository.findCreatorByTicket(ticketId));
+        validateUser(userId);
 
         // Get the ticket
         Ticket ticket = unwrapTicket(ticketId, ticketRepository.findByIdAndCreatorId(ticketId, userId));
 
+        User user = ticket.getCreator();
+
         user.getTickets().remove(ticket); // remove ticket from the user's list before updating
 
-        // ticketRepository.delete(ticket);
-
         userRepository.save(user); // Save user to updated reference, this will trigger orphanRemoval thus no need to manually delete the ticket from tickerRepository 
+    }
+
+    // We're just validating, not actually querying and extracting the db
+    private void validateUser(Long userId) {
+        if(!userRepository.existsById(userId)) throw new ResourceNotFoundException(userId, User.class);
     }
 
     private boolean isStatusChanged(Status oldStatus, Status newStatus) {
