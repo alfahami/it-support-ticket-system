@@ -10,6 +10,5 @@ public interface CommentService {
     Comment updateComment(Long commentId, Long ticketId, Long userId, Comment newComment);
     Comment retrieveComment(Long userId, Long ticketId, Long commentId);
     void removeComment(Long commentId, Long ticketId, Long userId);
-    //TODO: implement audit comments
     List<AuditLog> retrieveAuditLogs(Long commentId, Long ticketId, Long userId); 
 } 
