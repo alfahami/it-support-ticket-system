@@ -44,6 +44,7 @@ public class TicketServiceImp implements TicketService {
         auditLogRepository.save(new AuditLog(
                 null,
                 createdTicket.getId(),
+                null,
                 userId,
                 "TICKET_CREATED",
                 null,
@@ -95,6 +96,7 @@ public class TicketServiceImp implements TicketService {
             auditLogRepository.save(new AuditLog(
                     null,
                     ticketId,
+                    null,
                     userId,
                     "STATUS_UPDATED",
                     oldStatus.toString(),
