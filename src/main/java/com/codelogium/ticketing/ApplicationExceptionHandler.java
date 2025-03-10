@@ -36,16 +36,4 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
         ErrorResponse error = new ErrorResponse(errorMessages);
         return ResponseEntity.badRequest().body(error);
     }
-
-    // @ExceptionHandler(MethodArgumentNotValidException.class)
-    // public ResponseEntity<Object>
-    // handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-    // List<String> errorMessages = new ArrayList<>();
-
-    // e.getBindingResult().getAllErrors().forEach((error) ->
-    // errorMessages.add(error.getDefaultMessage()));
-
-    // ErrorResponse error = new ErrorResponse(errorMessages);
-    // return ResponseEntity.badRequest().body(error);
-    // }
 }
