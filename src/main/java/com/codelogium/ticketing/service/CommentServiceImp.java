@@ -3,6 +3,7 @@ package com.codelogium.ticketing.service;
 import static com.codelogium.ticketing.util.EntityUtils.*;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -44,12 +45,13 @@ public class CommentServiceImp implements CommentService {
 
         // Log ticket creation
         auditLogRepository.save(new AuditLog(
-                null,
+            retrieveTicket.getId(),
+                ticketId,
                 createdComment.getId(),
                 userId,
                 "COMMENT_ADDED",
                 null,
-                null,
+                createdComment.getContent(),
                 Instant.now()));
 
         auditLogRepository.flush(); // Ensure immediate persistence
@@ -63,29 +65,36 @@ public class CommentServiceImp implements CommentService {
         // Verify user existance by checking the creator relationship
         validateUser(userId);
         // Get the ticket and verify it belongs to this user
-        TicketServiceImp.unwrapTicket(ticketId, ticketRepository.findByIdAndCreatorId(ticketId, userId));
+        Ticket ticket = TicketServiceImp.unwrapTicket(ticketId, ticketRepository.findByIdAndCreatorId(ticketId, userId));
 
         Comment retrievedComment = unwrapComment(commentId,
                 commentRepository.findByIdAndTicketIdAndAuthorId(commentId, ticketId, userId));
+        // Store old content value before making changes
+        String content = retrievedComment.getContent();
         updateIfNotNull(retrievedComment::setContent, newComment.getContent());
         updateIfNotNull(retrievedComment::setTicket, newComment.getTicket());
 
         // if the user changed the content of the comment, update the timestamp
+        Comment savedComment = new Comment();
         if (newComment.getContent().equals(retrievedComment.getContent())) {
             updateIfNotNull(retrievedComment::setCreatedAt, Instant.now());
+            // attempts to save comment
+            savedComment = commentRepository.save(retrievedComment);
+
             // Log ticket creation
             auditLogRepository.save(new AuditLog(
                     null,
+                    ticket.getId(),
                     retrievedComment.getId(),
                     userId,
                     "COMMENT_UPDATED",
+                    content,
                     retrievedComment.getContent(),
-                    newComment.getContent(),
                     Instant.now()));
 
             auditLogRepository.flush(); // Ensure immediate persistence
         }
-        return commentRepository.save(retrievedComment);
+        return savedComment;
     }
 
     @Override
@@ -100,6 +109,17 @@ public class CommentServiceImp implements CommentService {
                 commentRepository.findByIdAndTicketIdAndAuthorId(commentId, ticketId, userId));
 
         return retrievedComment;
+    }
+
+    @Override
+    public List<AuditLog> retrieveAuditLogs(Long commentId, Long ticketId, Long userId) {
+        validateUser(userId);
+
+        TicketServiceImp.unwrapTicket(ticketId, ticketRepository.findByIdAndCreatorId(ticketId, userId));
+
+        unwrapComment(commentId, commentRepository.findByIdAndTicketIdAndAuthorId(commentId, ticketId, userId));
+
+        return auditLogRepository.findByCommentId(commentId);
     }
 
     @Override

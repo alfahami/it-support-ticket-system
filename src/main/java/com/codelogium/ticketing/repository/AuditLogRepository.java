@@ -8,4 +8,5 @@ import com.codelogium.ticketing.entity.AuditLog;
 
 public interface AuditLogRepository extends JpaRepository<AuditLog, Long>{
     List<AuditLog> findByTicketId(Long ticketId);
+    List<AuditLog> findByCommentId(Long commentId);
 }

@@ -27,6 +27,7 @@ public class AuditLog {
     private Long id;
 
     private Long ticketId;   // Tracks which tickets was changed
+    private Long commentId;
     private Long userId;     // Who made the change
     private String action;   // What was made: STATUS_UPDATED, COMMENT_ADDED
     private String oldValue; // Previous status (or null if creation)
