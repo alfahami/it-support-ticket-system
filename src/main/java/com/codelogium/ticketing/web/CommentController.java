@@ -89,7 +89,7 @@ public class CommentController {
         })
         @Operation(summary = "Delete Comment", description = "Deletes a comment by ID")
         @DeleteMapping("/{commentId}")
-        public ResponseEntity<HttpStatus> removeComment(
+        public ResponseEntity<Void> removeComment(
                         @PathVariable Long commentId,
                         @PathVariable Long ticketId,
                         @PathVariable Long userId) {

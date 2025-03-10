@@ -108,7 +108,7 @@ public class TicketController {
     })
     @Operation(summary = "Delete Ticket", description = "Deletes a ticket by ID")
     @DeleteMapping("/{ticketId}")
-    public ResponseEntity<HttpStatus> removeTicket(@PathVariable Long userId, @PathVariable Long ticketId) {
+    public ResponseEntity<Void> removeTicket(@PathVariable Long userId, @PathVariable Long ticketId) {
         ticketService.removeTicket(ticketId, userId);
         return ResponseEntity.noContent().build();
     }
