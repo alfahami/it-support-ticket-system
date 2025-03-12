@@ -42,6 +42,7 @@ public class TicketController {
             @ApiResponse(responseCode = "400", description = "Bad Request: unsuccessful submission")
     })
     @Operation(summary = "Create Ticket", description = "Creates a new support ticket")
+    @PreAuthorize("hasAuthority('EMPLOYEE')")
     @PostMapping
     public ResponseEntity<String> createTicket(@PathVariable Long userId, @RequestBody @Valid Ticket newTicket) {
         ticketService.createTicket(userId, newTicket);
@@ -58,18 +59,17 @@ public class TicketController {
         return ResponseEntity.ok(ticketService.retrieveTicket(ticketId, userId));
     }
 
-    //TODO: to be run only by employees
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Ticket successfully updated", content = @Content(schema = @Schema(implementation = Ticket.class))),
         @ApiResponse(responseCode = "404", description = "Ticket not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @Operation(summary = "Update Ticket Info",  description="Update an existing ticket's details")
+    @PreAuthorize("hasAuthority('EMPLOYEE')")
     @PatchMapping("/{ticketId}/info")
     public ResponseEntity<Ticket> updateTicketInfo(@PathVariable Long ticketId, @PathVariable Long userId, @RequestBody @Valid TicketInfoUpdateDTO dto) {
         return ResponseEntity.ok(ticketService.updateTicketInfo(ticketId, userId, dto));
     }
 
-    // TODO: to be run by IT Support
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Ticket successfully updated", content = @Content(schema = @Schema(implementation = Ticket.class))),
         @ApiResponse(responseCode = "404", description = "Ticket not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
@@ -105,7 +105,8 @@ public class TicketController {
             @ApiResponse(responseCode = "200", description = "Audit logs successfully retrieved", content = @Content(schema = @Schema(implementation = AuditLog.class))),
             @ApiResponse(responseCode = "404", description = "Ticket not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    @Operation(summary = "Audit Comment Logs", description = "Retrieves audit logs of a ticket")
+    @Operation(summary = "Audit Tickets Logs", description = "Retrieves audit logs of a ticket")
+    @PreAuthorize("hasAuthority('IT_SUPPORT')")
     @GetMapping("/{ticketId}/audit-logs")
     public ResponseEntity<List<AuditLog>> retrieveAuditLogs(@PathVariable Long ticketId) {
         return ResponseEntity.ok(ticketService.retrieveAuditLogs(ticketId, ticketId));

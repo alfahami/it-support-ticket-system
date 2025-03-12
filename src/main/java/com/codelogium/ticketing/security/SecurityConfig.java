@@ -12,6 +12,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import com.codelogium.ticketing.security.filter.AuthenticationFilter;
 import com.codelogium.ticketing.security.filter.ExceptionHandlerFilter;
 import com.codelogium.ticketing.security.filter.JWTAuthorizationFilter;
+import com.codelogium.ticketing.security.handler.CustomAccesDeniedHandler;
+import com.codelogium.ticketing.security.handler.CustomAuthenitcationEntryPoint;
 import com.codelogium.ticketing.security.manager.CustomAuthenticationManager;
 
 import lombok.AllArgsConstructor;
@@ -36,7 +38,12 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.POST, SecurityConstants.REGISTER_PATH).permitAll()
             .requestMatchers("/swagger-ui/*", "/api-docs/**", "/h2-console/*").permitAll() // allows swagger ui to public user
             .requestMatchers(HttpMethod.PATCH, "/users/{userId}/tickets/{ticketId}/status").hasAuthority("IT_SUPPORT")
+            .requestMatchers("/users/{userId}/tickets/{ticketId}/info").hasAuthority("EMPLOYEE")
             .anyRequest().authenticated())
+            .exceptionHandling(handler -> {
+                handler.accessDeniedHandler(new CustomAccesDeniedHandler());
+                handler.authenticationEntryPoint(new CustomAuthenitcationEntryPoint());
+            })
             .addFilterBefore(new ExceptionHandlerFilter(), AuthenticationFilter.class) // first filter to run before any filter
             .addFilter(authenticationFilter)
             .addFilterAfter(new JWTAuthorizationFilter(), AuthenticationFilter.class)
