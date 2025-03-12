@@ -10,11 +10,11 @@ import com.codelogium.ticketing.exception.ResourceNotFoundException;
 import com.codelogium.ticketing.repository.UserRepository;
 
 @Service
-public class UserDetailsServiceImp implements UserDetailsService {
+public class CustomUserDetailsServiceImp implements UserDetailsService {
 
     private final UserRepository userRepository;
 
-    public UserDetailsServiceImp(UserRepository userRepository) {
+    public CustomUserDetailsServiceImp(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -22,7 +22,7 @@ public class UserDetailsServiceImp implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        return new UserDetailsImp(user);
+        return new CustomUserDetailsImp(user);
     }
     
 }

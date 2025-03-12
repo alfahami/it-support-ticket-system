@@ -23,7 +23,7 @@ import lombok.AllArgsConstructor;
  */
 
 @AllArgsConstructor
-public class UserDetailsImp implements UserDetails {
+public class CustomUserDetailsImp implements UserDetails {
 
     private User user;
 
