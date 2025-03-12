@@ -34,12 +34,8 @@ public class UserDetailsImp implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
-        System.out.println("Get Authority method called");
-        System.out.flush();  // Force immediate flush to console output
-
         UserRole role = user.getRole();
 
-        System.out.println("Role: " + role.toString());
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
 
         authorities.add(new SimpleGrantedAuthority(role.toString()));

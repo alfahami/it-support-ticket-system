@@ -2,10 +2,13 @@ package com.codelogium.ticketing.security.filter;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.auth0.jwt.JWT;
@@ -24,21 +27,27 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    /*
-     * GLOBAL EXCEPTION HANDLER PURELY FOR FILTERS
-     */
     private CustomAuthenticationManager customAuthenticationManager;
 
+    // When the user visit /authenticate we will attempt to authenticate the user
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException {
 
         try {
-            // Deserializing the incoming data from the request to a User object
+            /*
+             * Deserializing the incoming data from the request to a User object made when
+             * visiting /authenticate in order to grab the username/email and password
+             */
             User user = new ObjectMapper().readValue(request.getInputStream(), User.class);
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUsername(),
                     user.getPassword());
+            /*
+             * CustomAuthenticationManager will try to autenticate the created object
+             * running authenticate(), one way hash the password and resend the object to
+             * this if there's a match
+             */
             return customAuthenticationManager.authenticate(authentication);
         } catch (IOException e) {
             throw new RuntimeException();
@@ -57,8 +66,14 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
             Authentication authResult) throws IOException, ServletException {
+                
+        List<String> authorities = authResult.getAuthorities().stream()
+                            .map(GrantedAuthority::getAuthority)
+                            .collect(Collectors.toList());
+
         String token = JWT.create()
                 .withSubject(authResult.getName())
+                .withClaim("authorities", authorities)
                 .withExpiresAt(new Date(System.currentTimeMillis() + SecurityConstants.TOKEN_EXPIRATION))
                 .sign(Algorithm.HMAC512(SecurityConstants.SECRET_KEY));
         response.addHeader(SecurityConstants.AUTHORIZATION, SecurityConstants.BEARER + token);

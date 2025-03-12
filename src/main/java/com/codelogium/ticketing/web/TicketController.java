@@ -3,6 +3,8 @@ package com.codelogium.ticketing.web;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.bind.annotation.*;
 
 import com.codelogium.ticketing.dto.TicketInfoUpdateDTO;
@@ -27,6 +29,7 @@ import lombok.AllArgsConstructor;
 import java.util.List;
 
 @RestController
+@EnableMethodSecurity // apply security measures at method level
 @AllArgsConstructor
 @Tag(name = "Ticket Controller", description = "Manages support tickets for users")
 @RequestMapping(value = "/users/{userId}/tickets", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -72,6 +75,7 @@ public class TicketController {
         @ApiResponse(responseCode = "404", description = "Ticket not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @Operation(summary = "Update Ticket Status",  description="Update an existing ticket's status")
+    @PreAuthorize("hasAuthority('IT_SUPPORT')")
     @PatchMapping("/{ticketId}/status")
     public ResponseEntity<Ticket> updateTicketStatus(@PathVariable Long ticketId, @PathVariable Long userId, @RequestBody @Valid TicketStatusUpdateDTO dto) {
         return ResponseEntity.ok(ticketService.updateTicketStatus(ticketId, userId, dto));
