@@ -28,7 +28,7 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         }
     }
 
-    private void sendErrorResponse(HttpServletResponse response, int status, String message) throws IOException {
+    public static void sendErrorResponse(HttpServletResponse response, int status, String message) throws IOException {
         response.setStatus(status);
         response.getWriter().write(message);
         response.getWriter().flush();

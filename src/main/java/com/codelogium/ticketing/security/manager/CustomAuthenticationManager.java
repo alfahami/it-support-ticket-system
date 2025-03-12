@@ -9,20 +9,20 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import com.codelogium.ticketing.security.rbac.UserDetailsServiceImp;
+import com.codelogium.ticketing.security.rbac.CustomUserDetailsServiceImp;
 import lombok.AllArgsConstructor;
 
 @Component
 @AllArgsConstructor
 public class CustomAuthenticationManager implements AuthenticationManager {
     
-    private UserDetailsServiceImp userDetailsServiceImp;
+    private CustomUserDetailsServiceImp customUserDetailsServiceImp;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
-        UserDetails userDetails  = userDetailsServiceImp.loadUserByUsername(authentication.getName());
+        UserDetails userDetails  = customUserDetailsServiceImp.loadUserByUsername(authentication.getName());
 
         if(!bCryptPasswordEncoder.matches(authentication.getCredentials().toString(), userDetails.getPassword())) {
             throw new BadCredentialsException("You provided an incorrect Password");
