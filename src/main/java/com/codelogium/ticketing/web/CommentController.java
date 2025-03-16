@@ -33,7 +33,8 @@ public class CommentController {
 
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "201", description = "Comment successfully created"),
-                        @ApiResponse(responseCode = "400", description = "Bad Request: Unsuccessful submission")
+                        @ApiResponse(responseCode = "400", description = "Bad Request: Unsuccessful submission"),
+                        @ApiResponse(ref = "#/components/responses/401")
         })
         @Operation(summary = "Create Comment", description = "Adds a new comment to a ticket")
         @PostMapping
@@ -47,7 +48,8 @@ public class CommentController {
 
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Comment successfully updated"),
-                        @ApiResponse(responseCode = "404", description = "Comment not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                        @ApiResponse(responseCode = "404", description = "Comment not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                        @ApiResponse(ref = "#/components/responses/401")
         })
         @Operation(summary = "Update Comment", description = "Updates an existing comment")
         @PatchMapping("/{commentId}")
@@ -61,7 +63,8 @@ public class CommentController {
 
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Comment successfully retrieved", content = @Content(schema = @Schema(implementation = Comment.class))),
-                        @ApiResponse(responseCode = "404", description = "Comment not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                        @ApiResponse(responseCode = "404", description = "Comment not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                        @ApiResponse(ref = "#/components/responses/401")
         })
         @Operation(summary = "Get Comment", description = "Retrieves a comment by ID")
         @GetMapping("/{commentId}")
@@ -74,7 +77,8 @@ public class CommentController {
 
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Comment Logs successfully retrieved", content = @Content(array = @ArraySchema(schema = @Schema(implementation = AuditLog.class)))),
-                        @ApiResponse(responseCode = "404", description = "User, Ticket or Comment not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                        @ApiResponse(responseCode = "404", description = "User, Ticket or Comment not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                        @ApiResponse(ref = "#/components/responses/401")
         })
         @Operation(summary = "Audit Comment Log", description = "Retrieves Comments' Audit Log")
         @GetMapping("/{commentId}/audit-logs")
@@ -85,7 +89,8 @@ public class CommentController {
 
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "204", description = "Comment successfully deleted"),
-                        @ApiResponse(responseCode = "404", description = "Comment not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                        @ApiResponse(responseCode = "404", description = "Comment not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                        @ApiResponse(ref = "#/components/responses/401")
         })
         @Operation(summary = "Delete Comment", description = "Deletes a comment by ID")
         @DeleteMapping("/{commentId}")

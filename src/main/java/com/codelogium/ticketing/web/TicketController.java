@@ -39,7 +39,9 @@ public class TicketController {
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Ticket successfully created", content = @Content(schema = @Schema(implementation = Ticket.class))),
-            @ApiResponse(responseCode = "400", description = "Bad Request: unsuccessful submission")
+            @ApiResponse(responseCode = "400", description = "Bad Request: unsuccessful submission"),
+            @ApiResponse(ref = "#/components/responses/401"),
+            @ApiResponse(ref = "#/components/responses/403")
     })
     @Operation(summary = "Create Ticket", description = "Creates a new support ticket")
     @PreAuthorize("hasAuthority('EMPLOYEE')")
@@ -51,7 +53,8 @@ public class TicketController {
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ticket successfully retrieved", content = @Content(schema = @Schema(implementation = Ticket.class))),
-            @ApiResponse(responseCode = "404", description = "Ticket not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            @ApiResponse(responseCode = "404", description = "Ticket not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(ref = "#/components/responses/401")
     })
     @Operation(summary = "Get Ticket", description = "Retrieves a ticket by ID")
     @GetMapping("/{ticketId}")
@@ -61,7 +64,9 @@ public class TicketController {
 
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Ticket successfully updated", content = @Content(schema = @Schema(implementation = Ticket.class))),
-        @ApiResponse(responseCode = "404", description = "Ticket not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+        @ApiResponse(responseCode = "404", description = "Ticket not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(ref = "#/components/responses/401"),
+        @ApiResponse(ref = "#/components/responses/403")
     })
     @Operation(summary = "Update Ticket Info",  description="Update an existing ticket's details")
     @PreAuthorize("hasAuthority('EMPLOYEE')")
@@ -72,7 +77,9 @@ public class TicketController {
 
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Ticket successfully updated", content = @Content(schema = @Schema(implementation = Ticket.class))),
-        @ApiResponse(responseCode = "404", description = "Ticket not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+        @ApiResponse(responseCode = "404", description = "Ticket not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(ref = "#/components/responses/401"),
+        @ApiResponse(ref = "#/components/responses/403")
     })
     @Operation(summary = "Update Ticket Status",  description="Update an existing ticket's status")
     @PreAuthorize("hasAuthority('IT_SUPPORT')")
@@ -83,7 +90,8 @@ public class TicketController {
 
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Tickets successfully retrieved", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Ticket.class)))),
-        @ApiResponse(responseCode = "404", description = "Tickets not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+        @ApiResponse(responseCode = "404", description = "Tickets not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(ref = "#/components/responses/401")
     })
     @Operation(summary = "Get All Tickets", description = "Retrieves all user's existing tickets")
     @GetMapping("/all")
@@ -93,7 +101,8 @@ public class TicketController {
 
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Ticket successfully found", content = @Content(schema = @Schema(implementation = Ticket.class))),
-        @ApiResponse(responseCode = "404", description = "Ticket or user not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+        @ApiResponse(responseCode = "404", description = "Ticket or user not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(ref = "#/components/responses/401")
     })
     @Operation(summary = "Search Ticket", description = "Search ticket by its id and status")
     @GetMapping("{ticketId}/search")
@@ -103,7 +112,9 @@ public class TicketController {
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Audit logs successfully retrieved", content = @Content(schema = @Schema(implementation = AuditLog.class))),
-            @ApiResponse(responseCode = "404", description = "Ticket not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            @ApiResponse(responseCode = "404", description = "Ticket not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(ref = "#/components/responses/401"),
+            @ApiResponse(ref = "#/components/responses/403")
     })
     @Operation(summary = "Audit Tickets Logs", description = "Retrieves audit logs of a ticket")
     @PreAuthorize("hasAuthority('IT_SUPPORT')")
@@ -114,7 +125,8 @@ public class TicketController {
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Ticket successfully deleted"),
-            @ApiResponse(responseCode = "404", description = "Ticket not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            @ApiResponse(responseCode = "404", description = "Ticket not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(ref = "#/components/responses/401")
     })
     @Operation(summary = "Delete Ticket", description = "Deletes a ticket by ID")
     @DeleteMapping("/{ticketId}")

@@ -38,9 +38,11 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
     }
 
+    // TODO: don't send the whole user entity to the client since there's password
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User successfully retrieved", content = @Content(schema = @Schema(implementation = User.class))),
-            @ApiResponse(responseCode = "404", description = "User not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(ref = "#/components/responses/401") // Gloabl unauthorized response
     })
     @Operation(summary = "Get User", description = "Retrieves a user by ID")
     @GetMapping("/{userId}")
@@ -50,7 +52,8 @@ public class UserController {
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "User successfully deleted"),
-            @ApiResponse(responseCode = "404", description = "User not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401", ref = "#/components/responses/401") // Gloabl 401 response
     })
     @Operation(summary = "Delete User", description = "Deletes a user by ID")
     @DeleteMapping("/{userId}")
