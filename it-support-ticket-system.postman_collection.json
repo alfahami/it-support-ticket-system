@@ -1,0 +1,622 @@
+{
+	"info": {
+		"_postman_id": "69371267-933f-4ac3-b1db-79f9da2a0adc",
+		"name": "it-support-ticket-system",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38716645"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"tupac\",\r\n    \"password\":\"tupac123\",\r\n    \"email\":\"tupac@shakur.com\",\r\n    \"role\":\"EMPLOYEE\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Authenticate User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"tupac\",\r\n    \"password\":\"tupac123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/user/authenticate",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"user",
+								"authenticate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieve User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0dXBhYyIsImV4cCI6MTc0MTczOTEyMH0.aQpg5xLZ6W_Xh8TnSPdUH-tUtmHfejjk3xcHnsyVkg_1LdAKShsXQ0CMrqLQefgTrmRyFExYFDPz6OgtYTkJ0A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/users/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0dXBhYyIsImV4cCI6MTc0MTczOTEyMH0.aQpg5xLZ6W_Xh8TnSPdUH-tUtmHfejjk3xcHnsyVkg_1LdAKShsXQ0CMrqLQefgTrmRyFExYFDPz6OgtYTkJ0A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/users/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieve All Tickets By Creator",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0dXBhYyIsImV4cCI6MTc0MTczOTEyMH0.aQpg5xLZ6W_Xh8TnSPdUH-tUtmHfejjk3xcHnsyVkg_1LdAKShsXQ0CMrqLQefgTrmRyFExYFDPz6OgtYTkJ0A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/users/1/tickets/all",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"1",
+								"tickets",
+								"all"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Ticket",
+			"item": [
+				{
+					"name": "Create Ticket",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0dXBhYyIsImV4cCI6MTc0MzAzNjI5NywiYXV0aG9yaXRpZXMiOlsiRU1QTE9ZRUUiXX0.f8-psgF5HEFd-xIIjJ3FblglFGD2v6wiTrMO3dTeFT7euagU4YCTS1BPimqvASv3XVd-uxWOSXv_JACpDpvCvA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\":\"Discrepancy creating org account\",\r\n    \"description\":\"I have issues creating the organization account\",\r\n    \"category\":\"NETWORK\",\r\n    \"priority\":\"LOW\",\r\n    \"status\":\"NEW\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/users/1/tickets",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"1",
+								"tickets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieves Ticket",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0dXBhYyIsImV4cCI6MTc0MzAzNjI5NywiYXV0aG9yaXRpZXMiOlsiRU1QTE9ZRUUiXX0.f8-psgF5HEFd-xIIjJ3FblglFGD2v6wiTrMO3dTeFT7euagU4YCTS1BPimqvASv3XVd-uxWOSXv_JACpDpvCvA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/users/1/tickets/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"1",
+								"tickets",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Ticket Info",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0dXBhYyIsImV4cCI6MTc0MTczOTEyMH0.aQpg5xLZ6W_Xh8TnSPdUH-tUtmHfejjk3xcHnsyVkg_1LdAKShsXQ0CMrqLQefgTrmRyFExYFDPz6OgtYTkJ0A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\":\"Discrepancy creating org account\",\r\n    \"description\":\"I have issues creating the organization account\",\r\n    \"category\":\"NETWORK\",\r\n    \"priority\":\"LOW\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/users/1/tickets/1/info",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"1",
+								"tickets",
+								"1",
+								"info"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Ticket Status",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0dXBhYyIsImV4cCI6MTc0MzAzNjI5NywiYXV0aG9yaXRpZXMiOlsiRU1QTE9ZRUUiXX0.f8-psgF5HEFd-xIIjJ3FblglFGD2v6wiTrMO3dTeFT7euagU4YCTS1BPimqvASv3XVd-uxWOSXv_JACpDpvCvA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"status\":\"RESOLVED\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/users/1/tickets/1/status",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"1",
+								"tickets",
+								"1",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Ticket",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0dXBhYyIsImV4cCI6MTc0MTQ4NzExM30._-ORXOYMt9s8y060Y9FSfV6hqYff7co8x7wnaaZlABIR24LtJxdxYif0wTGKaBh6kafVriihtOlJf0gRvYHocw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/users/1/tickets/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"1",
+								"tickets",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search by ID and Status",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0dXBhYyIsImV4cCI6MTc0MTUzNTQ1Mn0.SQi_EpH_kNPDz5_QyHmeGejhuDajEgXvmkmhV8BvJG41lnbVDp2iJpLyi-DKTrx2F5rV-NASMvUT-G5n3ZcGMA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/users/1/tickets/1/search?status=NEW",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"1",
+								"tickets",
+								"1",
+								"search"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "NEW"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Audit Ticket Logs",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJGYWhtaSIsImV4cCI6MTc0MTY0Njk2MH0.J7h-7GQA3CMAIPEgKo6ozPTCEr38jmTJ_CO2k3CbehRa4UjpIl9dEEr8R2ukiSj8M-TaRXy9PtUKGfsEjmBkqg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/users/1/tickets/1/audit-logs",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"1",
+								"tickets",
+								"1",
+								"audit-logs"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Comment",
+			"item": [
+				{
+					"name": "Create Comment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0dXBhYyIsImV4cCI6MTc0MTc0MTk2MH0.eVHxnFu3r60jXog853uN1Ew_4snBQ0TXzX_yjTEJbk1JQOE3pJ4Vr3jZeAMDUTchMWzjGDSDZc4DMubJxRiDaA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"content\":\"Would you like to share your username so we can investigate\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/users/1/tickets/1/comments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"1",
+								"tickets",
+								"1",
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Comment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0dXBhYyIsImV4cCI6MTc0MTU4NDM4M30.7krPk580MJEUdA4WIw9333CQwuzPpnErAeV6rI7eTDuplpXdYpZ6aJ9RcUYMHmEzKIahYfJDWLr0OPmJ0SeGiQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"content\":\"Well, the issue was about a connection pool not being set up, could you recheck\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/users/1/tickets/1/comments/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"1",
+								"tickets",
+								"1",
+								"comments",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieves Comment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0dXBhYyIsImV4cCI6MTc0MTUzMjgzOH0.-FPp1fbhYbfzOe2ueHcLKXBlqCJB5CN45BqbfojJm3MTJPnw_2lh57iqoB03lGhE06euJj4fv0I_WE3JfHwo2w",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/users/1/tickets/1/comments/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"1",
+								"tickets",
+								"1",
+								"comments",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Comment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0dXBhYyIsImV4cCI6MTc0MTUzMTU3OH0.xWroEm9yyOT5mqzIWDrQcFOHnXcez_-_jgoiwtPuBU3pJA6EyxgW4-rlI-xqnFBTnxc79fN9qKHEz8-os70pCA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/users/1/tickets/1/comments/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"1",
+								"tickets",
+								"1",
+								"comments",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Audit Comment Logs",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0dXBhYyIsImV4cCI6MTc0MTU4NDM4M30.7krPk580MJEUdA4WIw9333CQwuzPpnErAeV6rI7eTDuplpXdYpZ6aJ9RcUYMHmEzKIahYfJDWLr0OPmJ0SeGiQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/users/1/tickets/1/comments/1/audit-logs",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"1",
+								"tickets",
+								"1",
+								"comments",
+								"1",
+								"audit-logs"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
