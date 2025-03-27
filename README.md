@@ -90,133 +90,13 @@ The system enforces access based on the following roles:
 
 ---
 
-## API Endpoints with examples
+## API documentation with examples
+<details>
+  <summary>Click to expand for detailed API documentation</summary>
 
-### **1. User Management**
-#### **Create User**
-- **Method:** `POST`
-- **URL:** `/users`
-- **Description:** Registers a new user (Employee or IT Support).
-- **Request Body:**
-  ```json
-  {
-    "username": "tupac",
-    "password": "12345RFTE",
-    "email": "tupac@shakur.com",
-    "role": "EMPLOYEE"
-  }
-  ```
+### Authentication
 
-#### **Authenticate User**
-- **Method:** `POST`
-- **URL:** `/user/authenticate`
-- **Description:** Logs in a user and returns a JWT token.
-- **Request Body:**
-  ```json
-  {
-    "username": "tupac",
-    "password": "12345RFTE"
-  }
-  ```
-
-#### **Retrieve User**
-- **Method:** `GET`
-- **URL:** `/users/{userId}`
-- **Authentication:** Bearer token required.
-
-#### **Remove User**
-- **Method:** `DELETE`
-- **URL:** `/users/{userId}`
-
----
-
-### **2. Ticket Management**
-#### **Create Ticket**
-- **Method:** `POST`
-- **URL:** `/users/{userId}/tickets`
-- **Description:** Allows an employee to create a new support ticket.
-- **Request Body:**
-  ```json
-  {
-    "title": "Issue with VPN",
-    "description": "Cannot connect to VPN",
-    "category": "NETWORK",
-    "priority": "HIGH",
-    "status": "NEW"
-  }
-  ```
-
-#### **Retrieve Ticket**
-- **Method:** `GET`
-- **URL:** `/users/{userId}/tickets/{ticketId}`
-
-#### **Update Ticket**
-- **Method:** `PATCH`
-- **URL:** `/users/{userId}/tickets/{ticketId}`
-- **Description:** Updates ticket details such as status and priority.
-
-#### **Remove Ticket**
-- **Method:** `DELETE`
-- **URL:** `/users/{userId}/tickets/{ticketId}`
-
-#### **Retrieve All Tickets by Creator**
-- **Method:** `GET`
-- **URL:** `/users/{userId}/tickets/all`
-
-#### **Search Tickets by Status**
-- **Method:** `GET`
-- **URL:** `/users/{userId}/tickets/search?status=RESOLVED`
-
-#### **Retrieve Ticket Audit Logs**
-- **Method:** `GET`
-- **URL:** `/users/{userId}/tickets/{ticketId}/audit-logs`
-- **Description:** Retrieves the history of status changes and actions performed on a ticket.
-
----
-
-### **3. Comment Management**
-#### **Create Comment**
-- **Method:** `POST`
-- **URL:** `/users/{userId}/tickets/{ticketId}/comments`
-- **Description:** Adds a comment to a ticket.
-- **Request Body:**
-  ```json
-  {
-    "content": "Can you provide more details about the issue?"
-  }
-  ```
-
-#### **Retrieve Comment**
-- **Method:** `GET`
-- **URL:** `/users/{userId}/tickets/{ticketId}/comments/{commentId}`
-
-#### **Update Comment**
-- **Method:** `PATCH`
-- **URL:** `/users/{userId}/tickets/{ticketId}/comments/{commentId}`
-- **Request Body:**
-  ```json
-  {
-    "content": "Have you tried restarting the system?"
-  }
-  ```
-
-#### **Remove Comment**
-- **Method:** `DELETE`
-- **URL:** `/users/{userId}/tickets/{ticketId}/comments/{commentId}`
-
----
-
-## Authentication & Security
-- The API uses **JWT Bearer Token Authentication** for protected routes.
-- **Employees** can only access their own tickets.
-- **IT Support** has permissions to view and modify all tickets.
----
-
-# API documentation with examples
-
-## Authentication
-
-### User Registration
+#### User Registration
 - **Endpoint:** `POST /users`
 - **Description:** Create a new user account
 - **Request Body:**
@@ -229,7 +109,7 @@ The system enforces access based on the following roles:
   }
   ```
 
-### User Authentication
+#### User Authentication
 - **Endpoint:** `POST /user/authenticate`
 - **Description:** Authenticate a user and receive a JWT token
 - **Request Body:**
@@ -241,32 +121,32 @@ The system enforces access based on the following roles:
   ```
 - **Response:** Returns a Bearer token for subsequent authenticated requests
 
-## User Management
+### User Management
 
-### Retrieve User
+#### Retrieve User
 - **Endpoint:** `GET /users/{userId}`
 - **Description:** Retrieve user details by ID
 - **Authentication:** Bearer Token Required
 - **Path Parameters:**
   - `userId`: ID of the user to retrieve
 
-### Remove User
+#### Remove User
 - **Endpoint:** `DELETE /users/{userId}`
 - **Description:** Remove a user account
 - **Authentication:** Bearer Token Required
 - **Path Parameters:**
   - `userId`: ID of the user to remove
 
-### Retrieve User's Tickets
+#### Retrieve User's Tickets
 - **Endpoint:** `GET /users/{userId}/tickets/all`
 - **Description:** Retrieve all tickets created by a specific user
 - **Authentication:** Bearer Token Required
 - **Path Parameters:**
   - `userId`: ID of the user whose tickets are to be retrieved
 
-## Ticket Management
+### Ticket Management
 
-### Create Ticket
+#### Create Ticket
 - **Endpoint:** `POST /users/{userId}/tickets`
 - **Description:** Create a new support ticket
 - **Authentication:** Bearer Token Required
@@ -283,7 +163,7 @@ The system enforces access based on the following roles:
   }
   ```
 
-### Retrieve Ticket
+#### Retrieve Ticket
 - **Endpoint:** `GET /users/{userId}/tickets/{ticketId}`
 - **Description:** Retrieve a specific ticket
 - **Authentication:** Bearer Token Required
@@ -291,7 +171,7 @@ The system enforces access based on the following roles:
   - `userId`: ID of the ticket creator
   - `ticketId`: ID of the ticket to retrieve
 
-### Update Ticket Information
+#### Update Ticket Information
 - **Endpoint:** `PATCH /users/{userId}/tickets/{ticketId}/info`
 - **Description:** Update ticket details
 - **Authentication:** Bearer Token Required
@@ -300,7 +180,7 @@ The system enforces access based on the following roles:
   - `ticketId`: ID of the ticket to update
 - **Request Body:** Same as ticket creation, with fields to update
 
-### Update Ticket Status
+#### Update Ticket Status
 - **Endpoint:** `PATCH /users/{userId}/tickets/{ticketId}/status`
 - **Description:** Update ticket status
 - **Authentication:** Bearer Token Required
@@ -314,7 +194,7 @@ The system enforces access based on the following roles:
   }
   ```
 
-### Remove Ticket
+#### Remove Ticket
 - **Endpoint:** `DELETE /users/{userId}/tickets/{ticketId}`
 - **Description:** Delete a specific ticket
 - **Authentication:** Bearer Token Required
@@ -322,7 +202,7 @@ The system enforces access based on the following roles:
   - `userId`: ID of the ticket creator
   - `ticketId`: ID of the ticket to remove
 
-### Search Ticket by ID and Status
+#### Search Ticket by ID and Status
 - **Endpoint:** `GET /users/{userId}/tickets/{ticketId}/search`
 - **Description:** Search for a ticket with specific status
 - **Authentication:** Bearer Token Required
@@ -332,7 +212,7 @@ The system enforces access based on the following roles:
 - **Query Parameters:**
   - `status`: Status to filter the ticket (e.g., "NEW")
 
-### Ticket Audit Logs
+#### Ticket Audit Logs
 - **Endpoint:** `GET /users/{userId}/tickets/{ticketId}/audit-logs`
 - **Description:** Retrieve audit logs for a specific ticket
 - **Authentication:** Bearer Token Required
@@ -340,9 +220,9 @@ The system enforces access based on the following roles:
   - `userId`: ID of the ticket creator
   - `ticketId`: ID of the ticket to retrieve logs for
 
-## Comment Management
+### Comment Management
 
-### Create Comment
+#### Create Comment
 - **Endpoint:** `POST /users/{userId}/tickets/{ticketId}/comments`
 - **Description:** Add a comment to a ticket
 - **Authentication:** Bearer Token Required
@@ -356,7 +236,7 @@ The system enforces access based on the following roles:
   }
   ```
 
-### Update Comment
+#### Update Comment
 - **Endpoint:** `PATCH /users/{userId}/tickets/{ticketId}/comments/{commentId}`
 - **Description:** Update an existing comment
 - **Authentication:** Bearer Token Required
@@ -371,7 +251,7 @@ The system enforces access based on the following roles:
   }
   ```
 
-### Retrieve Comment
+#### Retrieve Comment
 - **Endpoint:** `GET /users/{userId}/tickets/{ticketId}/comments/{commentId}`
 - **Description:** Retrieve a specific comment
 - **Authentication:** Bearer Token Required
@@ -380,7 +260,7 @@ The system enforces access based on the following roles:
   - `ticketId`: ID of the ticket containing the comment
   - `commentId`: ID of the comment to retrieve
 
-### Remove Comment
+#### Remove Comment
 - **Endpoint:** `DELETE /users/{userId}/tickets/{ticketId}/comments/{commentId}`
 - **Description:** Delete a specific comment
 - **Authentication:** Bearer Token Required
@@ -389,7 +269,7 @@ The system enforces access based on the following roles:
   - `ticketId`: ID of the ticket containing the comment
   - `commentId`: ID of the comment to remove
 
-### Comment Audit Logs
+#### Comment Audit Logs
 - **Endpoint:** `GET /users/{userId}/tickets/{ticketId}/comments/{commentId}/audit-logs`
 - **Description:** Retrieve audit logs for a specific comment
 - **Authentication:** Bearer Token Required
@@ -403,11 +283,13 @@ The system enforces access based on the following roles:
 - Role-Based Access Control (RBAC) is implemented
 - Audit logging is available for tickets and comments
 - Base URL: `http://localhost:8080`
+</details>
+
+## 💡 **Contribute!**  
+Feel free to reach out for improvements in design and code quality.  
+You’re welcome to create PRs to add new functionalities!
 
 
-### Contributors
-AL-FAHMAMI TOIHIR.
-
-### License
-This project is licensed under the MIT License.
+## License
+This project is licensed under the **MIT License**.
 
