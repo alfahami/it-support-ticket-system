@@ -1,6 +1,6 @@
 # IT Support Ticket System API
 A simple ticket management application for employees to report and track IT issues.\
-The project focuses on **Spring Security**, particularly **Role-Based Access Control (RBAC)**, ensuring secure API access based on user roles.
+The project focuses on **Spring Security**, particularly **Role-Based Access Control (RBAC)**, ensuring secure API access based on user roles.\
 Built with Spring Boot (Java 17), Oracle SQL (not yet implemented), and Java Swing (not yet implemented) for the UI.\
 Supports role-based access, status tracking, audit logging, and search/filtering.
 
@@ -90,7 +90,7 @@ The system enforces access based on the following roles:
 
 ---
 
-## API documentation with examples
+## Full API documentation with examples
 <details>
   <summary>Click to expand for detailed API documentation</summary>
 
