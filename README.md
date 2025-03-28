@@ -7,8 +7,6 @@ Supports role-based access, status tracking, audit logging, and search/filtering
 ## Overview
 The **IT Support Ticket System API** provides a platform for employees to create and track IT support tickets while allowing IT support staff to manage and resolve them. It includes endpoints for **user authentication, ticket management, comments, and audit logs**.
 
-Sure! Here's a clearer and more structured version of your text:  
-
 ---
 
 ## **Development Challenges**  
