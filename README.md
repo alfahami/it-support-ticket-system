@@ -37,10 +37,10 @@ To solve this, I opted for:
 
 This approach maintains a clean API while keeping the update logic clear.  
 
-### **3. Using DTOs for Status Updates**  
-When updating the ticket status, modifying the entire ticket object wasn’t ideal. Instead, I created a dedicated `UpdateStatusDTO` to handle partial updates efficiently.  
+### **3. Using DTOs for Info and Status Updates**  
+When updating the ticket status and ticket info, modifying the entire ticket object wasn’t ideal. Instead, I created a dedicated `TicketStautsUpdateDTO` and `TicketInfoUpdateDTO` to handle partial updates efficiently.  
 
-One consideration was whether to convert `UpdateStatusDTO` into a `Ticket` entity. Since it only updates a single field (`status`), I initially felt this conversion wasn’t necessary. However, using a conversion method or a mapping tool (e.g., MapStruct) could improve maintainability by keeping a clear separation between DTOs and entities.  
+One consideration was whether to convert these DTOs into a Ticket entity. Since the UpdateStatusDTO only updates a single field (status) and the TicketInfoUpdateDTO modifies only specific fields (e.g., description, title), I chose to apply the DTO values directly to the entity instead of mapping them. Initially, I felt this conversion wasn’t necessary. However, using a dedicated conversion method or a mapping tool like MapStruct could improve maintainability by ensuring a clear separation between DTOs and entities.
 
 ---
 
