@@ -7,6 +7,50 @@ Supports role-based access, status tracking, audit logging, and search/filtering
 ## Overview
 The **IT Support Ticket System API** provides a platform for employees to create and track IT support tickets while allowing IT support staff to manage and resolve them. It includes endpoints for **user authentication, ticket management, comments, and audit logs**.
 
+Sure! Here's a clearer and more structured version of your text:  
+
+---
+
+## **Development Challenges**  
+
+Building this application involved several key design decisions and challenges:  
+
+### **1. Implementing Role-Based Access Control with Spring Security**  
+One of the main challenges was deciding how to store user roles in JWT tokens. I considered two approaches:  
+- Storing roles directly in the JWT before encryption.  
+- Using JWT claims to store roles, keeping the token structure simpler.  
+
+Initially, I attempted to use Spring Security’s built-in claims, but I ultimately decided to store roles directly in the JWT token. Since there are only two roles (`IT_SUPPORT` and `EMPLOYEE`), this approach keeps things straightforward without significantly increasing token complexity.  
+
+### **2. Handling Ticket Updates for Employees and IT Support**  
+A design challenge arose when implementing the ticket update feature. Both employees and IT support agents needed to update ticket details using the same endpoint:  
+
+```
+/users/{userId}/tickets/{ticketId}
+```  
+
+Both `PATCH` and `PUT` could be used, but I needed to distinguish between updating ticket information (e.g., description) and updating ticket status.  
+
+To solve this, I opted for:  
+- `PATCH` for both operations.  
+- Using dedicated subpaths:  
+  - `/info` → for updating ticket details.  
+  - `/status` → for updating the ticket’s status.  
+
+This approach maintains a clean API while keeping the update logic clear.  
+
+### **3. Using DTOs for Status Updates**  
+When updating the ticket status, modifying the entire ticket object wasn’t ideal. Instead, I created a dedicated `UpdateStatusDTO` to handle partial updates efficiently.  
+
+One consideration was whether to convert `UpdateStatusDTO` into a `Ticket` entity. Since it only updates a single field (`status`), I initially felt this conversion wasn’t necessary. However, using a conversion method or a mapping tool (e.g., MapStruct) could improve maintainability by keeping a clear separation between DTOs and entities.  
+
+---
+
+### **Final Thoughts**  
+These design choices seemed to work well for my use case, but I’m open to feedback on best practices and potential improvements. If you have suggestions, feel free to share!  
+
+---
+
 ## Setup
 ### **1. Clone the Repository**
 ```sh
