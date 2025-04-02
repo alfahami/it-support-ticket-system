@@ -28,7 +28,7 @@ To address this, I implemented a **custom global exception handler within Spring
     │  ├── ExceptionHandlerFilter.java
     │  └── JWTAuthorizationFilter.java
     ├── handler
-    │  ├── CustomAccesDeniedHandler.java
+    │  ├── CustomAccessDeniedHandler.java
     │  └── CustomAuthenitcationEntryPoint.java
     ├── manager
     │  └── CustomAuthenticationManager.java
