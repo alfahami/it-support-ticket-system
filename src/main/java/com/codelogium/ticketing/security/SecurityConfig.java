@@ -12,7 +12,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import com.codelogium.ticketing.security.filter.AuthenticationFilter;
 import com.codelogium.ticketing.security.filter.ExceptionHandlerFilter;
 import com.codelogium.ticketing.security.filter.JWTAuthorizationFilter;
-import com.codelogium.ticketing.security.handler.CustomAccesDeniedHandler;
+import com.codelogium.ticketing.security.handler.CustomAccessDeniedHandler;
 import com.codelogium.ticketing.security.handler.CustomAuthenitcationEntryPoint;
 import com.codelogium.ticketing.security.manager.CustomAuthenticationManager;
 
@@ -41,7 +41,7 @@ public class SecurityConfig {
             .requestMatchers("/users/{userId}/tickets/{ticketId}/info").hasAuthority("EMPLOYEE")
             .anyRequest().authenticated())
             .exceptionHandling(handler -> {
-                handler.accessDeniedHandler(new CustomAccesDeniedHandler());
+                handler.accessDeniedHandler(new CustomAccessDeniedHandler());
                 handler.authenticationEntryPoint(new CustomAuthenitcationEntryPoint());
             })
             .addFilterBefore(new ExceptionHandlerFilter(), AuthenticationFilter.class) // first filter to run before any filter
