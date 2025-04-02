@@ -13,14 +13,39 @@ The **IT Support Ticket System API** provides a platform for employees to create
 
 Building this application involved several key design decisions and challenges:  
 
-### **1. Implementing Role-Based Access Control with Spring Security**  
+### 1. Designing a Spring Security Package for Handling Security Endpoints
+I structured my **Spring Security package** by separating concerns into different sub-packages, ensuring each component adheres to the **Single Responsibility Principle (SRP)**. This modular approach makes the security layer more maintainable and scalable.
+
+One challenge I encountered was handling exceptions properly, particularly authentication failures, access denial, and JWT-related errors. Since **Spring Security processes exceptions at the filter level before reaching the main application logic**, using a standard `@ControllerAdvice` global exception handler was not sufficient.
+
+To address this, I implemented a **custom global exception handler within Spring Security** using an `ExceptionHandlerFilter`. This ensures that security-related errors are caught early in the filter chain and returned with structured JSON responses.
+
+**Spring Security Package Structure**
+
+    security
+    ├── filter
+    │  ├── AuthenticationFilter.java
+    │  ├── ExceptionHandlerFilter.java
+    │  └── JWTAuthorizationFilter.java
+    ├── handler
+    │  ├── CustomAccesDeniedHandler.java
+    │  └── CustomAuthenitcationEntryPoint.java
+    ├── manager
+    │  └── CustomAuthenticationManager.java
+    ├── rbac
+    │  ├── CustomUserDetailsImp.java
+    │  └── CustomUserDetailsServiceImp.java
+    ├── SecurityConfig.java
+    └── SecurityConstants.java
+
+### 2. Implementing Role-Based Access Control with Spring Security 
 One of the main challenges was deciding how to store user roles in JWT tokens. I considered two approaches:  
 - Storing roles directly in the JWT before encryption.  
 - Using JWT claims to store roles, keeping the token structure simpler.  
 
 Initially, I attempted to use Spring Security’s built-in claims, but I ultimately decided to store roles directly in the JWT token. Since there are only two roles (`IT_SUPPORT` and `EMPLOYEE`), this approach keeps things straightforward without significantly increasing token complexity.  
 
-### **2. Handling Ticket Updates for Employees and IT Support**  
+### 3. Handling Ticket Updates for Employees and IT Support 
 A design challenge arose when implementing the ticket update feature. Both employees and IT support agents needed to update ticket details using the same endpoint:  
 
 ```
@@ -37,7 +62,7 @@ To solve this, I opted for:
 
 This approach maintains a clean API while keeping the update logic clear.  
 
-### **3. Using DTOs for Info and Status Updates**  
+### 4. Using DTOs for Info and Status Updates 
 When updating the ticket status and ticket info, modifying the entire ticket object wasn’t ideal. Instead, I created a dedicated `TicketStautsUpdateDTO` and `TicketInfoUpdateDTO` to handle partial updates efficiently.  
 
 One consideration was whether to convert these DTOs into a Ticket entity. Since the UpdateStatusDTO only updates a single field (status) and the TicketInfoUpdateDTO modifies only specific fields (e.g., description, title), I chose to apply the DTO values directly to the entity instead of mapping them. 
@@ -46,33 +71,33 @@ Initially, I felt this conversion wasn’t necessary. However, using a dedicated
 
 ---
 
-### **Final Thoughts**  
+### Final Thoughts
 These design choices seemed to work well for my use case, but I’m open to feedback on best practices and potential improvements. If you have suggestions, feel free to share!  
 
 ---
 
 ## Setup
-### **1. Clone the Repository**
+### 1. Clone the Repository
 ```sh
 git clone git@github.com:alfahami/it-support-ticket-system.git
 cd it-support-ticket-system
 ```
 
-### **2. Configure Database (H2 In-Memory Database)**
+### 2. Configure Database (H2 In-Memory Database)
 This project uses **H2**, an in-memory database for development and testing.
 
-#### **H2 Console Access**
+#### H2 Console Access
 Visit `http://localhost:8080/h2-console`
 - **JDBC URL:** `jdbc:h2:mem:ticketing`
 - **Username:** `sa`
 - **Password:** (leave empty by default)
 
-### **3. Install Dependencies (Maven)**
+### 3. Install Dependencies (Maven)
 ```sh
 mvn clean install
 ```
 
-### **4. Run the Application**
+### 4. Run the Application
 ```sh
 mvn spring-boot:run
 ```
