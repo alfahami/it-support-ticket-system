@@ -13,7 +13,8 @@ The **IT Support Ticket System API** provides a platform for employees to create
 
 Building this application involved several key design decisions and challenges:  
 
-### 1. Designing a Spring Security Package for Handling Security Endpoints
+### 1. Designing a Spring Security Architecture for Authentication and Error Handling
+
 I structured my **Spring Security package** by separating concerns into different sub-packages, ensuring each component adheres to the **Single Responsibility Principle (SRP)**. This modular approach makes the security layer more maintainable and scalable.
 
 One challenge I encountered was handling exceptions properly, particularly authentication failures, access denial, and JWT-related errors. Since **Spring Security processes exceptions at the filter level before reaching the main application logic**, using a standard `@ControllerAdvice` global exception handler was not sufficient.
