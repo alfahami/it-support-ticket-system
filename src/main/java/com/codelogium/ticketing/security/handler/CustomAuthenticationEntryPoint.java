@@ -11,13 +11,13 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class CustomAuthenitcationEntryPoint implements AuthenticationEntryPoint {
+public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException authException) throws IOException, ServletException {
         
-        ExceptionHandlerFilter.sendErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "ACESS DENIED: AUTHENITCATION REQUIRED");
+        ExceptionHandlerFilter.sendErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "ACCESS DENIED: AUTHENTICATION REQUIRED");
     }
     
 }

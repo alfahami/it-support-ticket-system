@@ -29,7 +29,7 @@ To address this, I implemented a **custom global exception handler within Spring
     │  └── JWTAuthorizationFilter.java
     ├── handler
     │  ├── CustomAccessDeniedHandler.java
-    │  └── CustomAuthenitcationEntryPoint.java
+    │  └── CustomAuthenticationEntryPoint.java
     ├── manager
     │  └── CustomAuthenticationManager.java
     ├── rbac
@@ -56,14 +56,14 @@ Both `PATCH` and `PUT` could be used, but I needed to distinguish between updati
 
 To solve this, I opted for:  
 - `PATCH` for both operations.  
-- Using dedicated subpaths:  
+- Using dedicated sub-paths:  
   - `/info` → for updating ticket details.  
   - `/status` → for updating the ticket’s status.  
 
 This approach maintains a clean API while keeping the update logic clear.  
 
 ### 4. Using DTOs for Info and Status Updates 
-When updating the ticket status and ticket info, modifying the entire ticket object wasn’t ideal. Instead, I created a dedicated `TicketStautsUpdateDTO` and `TicketInfoUpdateDTO` to handle partial updates efficiently.  
+When updating the ticket status and ticket info, modifying the entire ticket object wasn’t ideal. Instead, I created a dedicated `TicketStatusUpdateDTO` and `TicketInfoUpdateDTO` to handle partial updates efficiently.  
 
 One consideration was whether to convert these DTOs into a Ticket entity. Since the UpdateStatusDTO only updates a single field (status) and the TicketInfoUpdateDTO modifies only specific fields (e.g., description, title), I chose to apply the DTO values directly to the entity instead of mapping them. 
 

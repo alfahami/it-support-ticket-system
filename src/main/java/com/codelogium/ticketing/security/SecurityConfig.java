@@ -13,7 +13,7 @@ import com.codelogium.ticketing.security.filter.AuthenticationFilter;
 import com.codelogium.ticketing.security.filter.ExceptionHandlerFilter;
 import com.codelogium.ticketing.security.filter.JWTAuthorizationFilter;
 import com.codelogium.ticketing.security.handler.CustomAccessDeniedHandler;
-import com.codelogium.ticketing.security.handler.CustomAuthenitcationEntryPoint;
+import com.codelogium.ticketing.security.handler.CustomAuthenticationEntryPoint;
 import com.codelogium.ticketing.security.manager.CustomAuthenticationManager;
 
 import lombok.AllArgsConstructor;
@@ -42,7 +42,7 @@ public class SecurityConfig {
             .anyRequest().authenticated())
             .exceptionHandling(handler -> {
                 handler.accessDeniedHandler(new CustomAccessDeniedHandler());
-                handler.authenticationEntryPoint(new CustomAuthenitcationEntryPoint());
+                handler.authenticationEntryPoint(new CustomAuthenticationEntryPoint());
             })
             .addFilterBefore(new ExceptionHandlerFilter(), AuthenticationFilter.class) // first filter to run before any filter
             .addFilter(authenticationFilter)

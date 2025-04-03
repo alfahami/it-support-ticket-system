@@ -54,7 +54,7 @@ public class CustomUserDetailsImp implements UserDetails {
     }
     
     /*
-     * Srictly related to the user account state, to not confuse with JWT expiration
+     * Strictly related to the user account state, to not confuse with JWT expiration
      */
     @Override
     public boolean isAccountNonExpired() {
