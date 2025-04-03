@@ -20,12 +20,19 @@ One challenge I encountered was handling exceptions properly, particularly authe
 
 To address this, I implemented a **custom global exception handler within Spring Security** using an `ExceptionHandlerFilter`. This ensures that security-related errors are caught early in the filter chain and returned with structured JSON responses.
 
+Another challenge I faced was **retrieving the user from the authentication request (login request) to be processed by Spring Security**. 
+
+Initially, I considered injecting the `UserRepository` directly into the `AuthenticationManager` to fetch the user. However, I opted for a cleaner approach by implementing **a custom `UserDetails` and `UserDetailsService`**. This allowed me to use Spring Security’s built-in `loadUserByUsername` method for retrieving user details. 
+
+This implementation was then injected into the **Custom Authentication Manager**, ensuring a structured and reusable authentication process.
+
+
 **Spring Security Package Structure**
 
     security
     ├── filter
     │  ├── AuthenticationFilter.java
-    │  ├── ExceptionHandlerFilter.java
+    │  ├── ExceptionHandlerFilter.java <-- Global exception handler at the filter level
     │  └── JWTAuthorizationFilter.java
     ├── handler
     │  ├── CustomAccessDeniedHandler.java
