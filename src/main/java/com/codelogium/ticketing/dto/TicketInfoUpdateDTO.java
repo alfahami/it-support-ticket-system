@@ -22,7 +22,7 @@ public class TicketInfoUpdateDTO {
     @NotBlank(message = "Title cannot be blank or null")
     private String title;
 
-    @NotBlank(message = "Desscription cannot be blank or null")
+    @NotBlank(message = "Description cannot be blank or null")
     private String description;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
