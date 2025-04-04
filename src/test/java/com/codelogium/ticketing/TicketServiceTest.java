@@ -4,6 +4,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -73,8 +76,7 @@ public class TicketServiceTest {
         //Mock
         User testUser = new User(1L, "tupac", "tupac123", "tupac@gmail.com", UserRole.EMPLOYEE, null, null);
 
-        // Status is null in order to test if it being set while ticket saving
-        Ticket ticket = new Ticket(1L, "Discrepancy while login", "Error 500 keeps pop up while password is correct", Instant.now(), null, Category.NETWORK, Priority.HIGH, testUser, null);
+        Ticket ticket = new Ticket(1L, "Discrepancy while login", "Error 500 keeps pop up while password is correct", Instant.now(), Status.NEW, Category.NETWORK, Priority.HIGH, testUser, null);
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
         when(userRepository.existsById(1L)).thenReturn(true);
@@ -138,7 +140,32 @@ public class TicketServiceTest {
 
         // assert
         assertEquals(dto.getStatus(), result.getStatus());
-        assertEquals(retrievedTicket.getTitle(), result.getTitle());
-        
+        assertEquals(retrievedTicket.getTitle(), result.getTitle());  
     }
+
+    @Test
+    void shouldRemoveTicketSuccessfully() {
+        // Mock
+        User testUser = new User(1L, "tupac", "tupac123", "tupac@gmail.com", UserRole.EMPLOYEE, null, null);
+
+        Ticket ticket = new Ticket(1L, "Discrepancy while login", "Error 500 keeps pop up while password is correct", Instant.now(), Status.NEW, Category.NETWORK, Priority.HIGH, testUser, null);
+        // assure that user have its ticket list, as orphan removal will delete the tciket once it removed from user ticket list
+        List<Ticket> tickets = new ArrayList<>();
+        tickets.add(ticket);
+        testUser.setTickets(tickets);
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+        when(userRepository.existsById(1L)).thenReturn(true);
+        when(ticketRepository.findByIdAndCreatorId(1L, 1L)).thenReturn(Optional.of(ticket));
+        when(userRepository.save(testUser)).thenReturn(testUser);
+
+        // Act
+        ticketService.removeTicket(1L, 1L);
+
+        // Assert
+        assertFalse(testUser.getTickets().contains(ticket));
+        verify(userRepository, times(1)).save(testUser);
+        verify(ticketRepository, never()).delete(any());
+    }
+
 }
