@@ -23,7 +23,7 @@ To address this, I implemented a **custom global exception handler within Spring
 
 Another challenge I faced was **retrieving the user from the authentication request (login request) to be processed by Spring Security**. 
 
-Initially, I considered injecting the `UserRepository` directly into the `AuthenticationManager` to fetch the user. However, I opted for a cleaner approach by implementing **a custom `UserDetails` and `UserDetailsService`**. This allowed me to use Spring Security’s built-in `loadUserByUsername` method for retrieving user details. 
+Initially, I considered injecting the `UserServiceImpl` directly into the `AuthenticationManager` to fetch the user. However, I opted for a cleaner approach by implementing **a custom `UserDetails` and `UserDetailsService`** as I'm also dealing with role base access control. This allowed me to use Spring Security’s built-in `loadUserByUsername` method for retrieving user details. 
 
 This implementation was then injected into the **Custom Authentication Manager**, ensuring a structured and reusable authentication process.
 
@@ -54,13 +54,13 @@ One of the main challenges was deciding how to store user roles in JWT tokens. I
 Initially, I attempted to use Spring Security’s built-in claims, but I ultimately decided to store roles directly in the JWT token. Since there are only two roles (`IT_SUPPORT` and `EMPLOYEE`), this approach keeps things straightforward without significantly increasing token complexity.  
 
 ### 3. Handling Ticket Updates for Employees and IT Support 
-A design challenge arose when implementing the ticket update feature. Both employees and IT support agents needed to update ticket details using the same endpoint:  
+A design challenge arose when implementing the ticket update feature — employees and IT support agents needed to update ticket details through the same endpoint, but with different allowed fields:  
 
 ```
 /users/{userId}/tickets/{ticketId}
 ```  
 
-Both `PATCH` and `PUT` could be used, but I needed to distinguish between updating ticket information (e.g., description) and updating ticket status.  
+Both `PATCH` and `PUT` could be used, but I needed to distinguish between updating ticket information and updating ticket status from the uri.  
 
 To solve this, I opted for:  
 - `PATCH` for both operations.  
