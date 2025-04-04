@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import com.codelogium.ticketing.dto.TicketInfoUpdateDTO;
 import com.codelogium.ticketing.entity.Ticket;
 import com.codelogium.ticketing.entity.User;
 import com.codelogium.ticketing.entity.enums.Category;
@@ -84,6 +85,33 @@ public class TicketServiceTest {
         // Assert
         assertEquals(ticket.getId(), result.getId());
         assertEquals(ticket.getTitle(), result.getTitle());
+    }
 
+    @Test
+    void shouldUpdateTicketInfoSuccessfully() {
+        //Mock
+        User testUser = new User(1L, "tupac", "tupac123", "tupac@gmail.com", UserRole.EMPLOYEE, null, null);
+
+        // Status is null in order to test if it being set while ticket saving
+        Ticket ticket = new Ticket(1L, "Discrepancy while login", "Error 500 keeps pop up while password is correct", Instant.now(), null, Category.NETWORK, Priority.HIGH, testUser, null);
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+        when(userRepository.existsById(1L)).thenReturn(true);
+        when(ticketRepository.findByIdAndCreatorId(1L, 1L)).thenReturn(Optional.of(ticket));
+        
+        Ticket retrievedTicket = ticketRepository.findByIdAndCreatorId(1L, 1L).get();
+        
+        TicketInfoUpdateDTO dto = new TicketInfoUpdateDTO("Can't Login even if password is correct", null, null, Category.OTHER, Priority.MEDIUM);
+
+        when(ticketRepository.save(retrievedTicket)).thenReturn(retrievedTicket);
+
+        // Act
+        Ticket result = ticketService.updateTicketInfo(1L, 1L, dto);
+
+        // assert
+        assertEquals(dto.getTitle(), result.getTitle());
+        assertEquals(ticket.getDescription(), result.getDescription()); // assert with ticket because description was not changed
+        assertEquals(dto.getCategory(), result.getCategory());
+        assertEquals(dto.getPriority(), result.getPriority());
     }
 }
