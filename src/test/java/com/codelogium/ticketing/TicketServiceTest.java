@@ -100,10 +100,6 @@ public class TicketServiceTest {
 
         TicketInfoUpdateDTO dto = new TicketInfoUpdateDTO("Can't Login even if password is correct", null, null, Category.OTHER, Priority.MEDIUM);
 
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
-        when(userRepository.existsById(1L)).thenReturn(true);
-        when(ticketRepository.findByIdAndCreatorId(1L, 1L)).thenReturn(Optional.of(testTicket));
-        
         Ticket retrievedTicket = ticketRepository.findByIdAndCreatorId(1L, 1L).get();
         when(ticketRepository.save(retrievedTicket)).thenReturn(retrievedTicket);
         
