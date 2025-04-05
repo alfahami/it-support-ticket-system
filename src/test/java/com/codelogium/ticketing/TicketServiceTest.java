@@ -43,65 +43,66 @@ public class TicketServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    private User testUser;
+    private Ticket testTicket;
+
     @BeforeEach
     void setUp() throws Exception {
-        ticketService = new TicketServiceImp(ticketRepository, userRepository,auditLogRepository);     
+        ticketService = new TicketServiceImp(ticketRepository, userRepository,auditLogRepository);    
+        
+        testUser = new User(1L, "tupac", "tupac123", "tupac@gmail.com", UserRole.EMPLOYEE, null, null);
+
+        testTicket = new Ticket(1L, "Discrepancy while login", "Error 500 keeps pop up while password is correct", Instant.now(), Status.NEW, Category.NETWORK, Priority.HIGH, testUser, null);
+    }
+
+    private void mockBasicUserAndTicketRepo() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+        when(userRepository.existsById(1L)).thenReturn(true);
+        when(ticketRepository.findByIdAndCreatorId(1L, 1L)).thenReturn(Optional.of(testTicket));
     }
 
     @Test
     void shouldAddTicketSuccessfully() {
-
         //Mock
-        User testUser = new User(1L, "tupac", "tupac123", "tupac@gmail.com", UserRole.EMPLOYEE, null, null);
-
         // Status is null in order to test if it being set while ticket saving
-        Ticket ticket = new Ticket(1L, "Discrepancy while login", "Error 500 keeps pop up while password is correct", Instant.now(), null, Category.NETWORK, Priority.HIGH, testUser, null);
+        Ticket ticketToCreate = new Ticket(1L, "Discrepancy while login", "Error 500 keeps pop up while password is correct", Instant.now(), null, Category.NETWORK, Priority.HIGH, testUser, null);
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
-        when(ticketRepository.save(ticket)).thenReturn(ticket);
+        when(ticketRepository.save(ticketToCreate)).thenReturn(ticketToCreate);
 
         // Act
-        Ticket createdTicket = ticketService.createTicket(1L, ticket);
+        Ticket result = ticketService.createTicket(1L, ticketToCreate);
 
         // Assert
-        assertNotNull(createdTicket);
-        assertEquals("Discrepancy while login", createdTicket.getTitle());
-        assertEquals(Status.NEW, createdTicket.getStatus()); // Assure that status was set during ticket creation
+        assertNotNull(result);
+        assertEquals("Discrepancy while login", result.getTitle());
+        assertEquals(Status.NEW, result.getStatus()); // Assure that status was set during ticket creation
         verify(ticketRepository, times(1)).save(any(Ticket.class));
     }
 
     @Test
     void shouldRetrieveTicketSuccessfully() {
         //Mock
-        User testUser = new User(1L, "tupac", "tupac123", "tupac@gmail.com", UserRole.EMPLOYEE, null, null);
-
-        Ticket ticket = new Ticket(1L, "Discrepancy while login", "Error 500 keeps pop up while password is correct", Instant.now(), Status.NEW, Category.NETWORK, Priority.HIGH, testUser, null);
-
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
-        when(userRepository.existsById(1L)).thenReturn(true);
-        when(ticketRepository.findByIdAndCreatorId(1L, 1L)).thenReturn(Optional.of(ticket));
+        mockBasicUserAndTicketRepo();
 
         // Act
         Ticket result = ticketService.retrieveTicket(1L, 1L);
 
         // Assert
-        assertEquals(ticket.getId(), result.getId());
-        assertEquals(ticket.getTitle(), result.getTitle());
+        assertEquals(testTicket.getId(), result.getId());
+        assertEquals(testTicket.getTitle(), result.getTitle());
     }
 
     @Test
     void shouldUpdateTicketInfoSuccessfully() {
         //Mock
-        User testUser = new User(1L, "tupac", "tupac123", "tupac@gmail.com", UserRole.EMPLOYEE, null, null);
-
-        // Status is null in order to test if it being set while ticket saving
-        Ticket ticket = new Ticket(1L, "Discrepancy while login", "Error 500 keeps pop up while password is correct", Instant.now(), null, Category.NETWORK, Priority.HIGH, testUser, null);
+        mockBasicUserAndTicketRepo();
 
         TicketInfoUpdateDTO dto = new TicketInfoUpdateDTO("Can't Login even if password is correct", null, null, Category.OTHER, Priority.MEDIUM);
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
         when(userRepository.existsById(1L)).thenReturn(true);
-        when(ticketRepository.findByIdAndCreatorId(1L, 1L)).thenReturn(Optional.of(ticket));
+        when(ticketRepository.findByIdAndCreatorId(1L, 1L)).thenReturn(Optional.of(testTicket));
         
         Ticket retrievedTicket = ticketRepository.findByIdAndCreatorId(1L, 1L).get();
         when(ticketRepository.save(retrievedTicket)).thenReturn(retrievedTicket);
@@ -111,7 +112,7 @@ public class TicketServiceTest {
 
         // assert
         assertEquals(dto.getTitle(), result.getTitle());
-        assertEquals(ticket.getDescription(), result.getDescription()); // assert with ticket because description was not changed
+        assertEquals(testTicket.getDescription(), result.getDescription()); // assert with ticket because description was not changed
         assertEquals(dto.getCategory(), result.getCategory());
         assertEquals(dto.getPriority(), result.getPriority());
     }
@@ -119,17 +120,10 @@ public class TicketServiceTest {
     @Test
     void shouldUpdateTicketStatusSuccessfully() {
         //Mock
-        User testUser = new User(1L, "tupac", "tupac123", "tupac@gmail.com", UserRole.EMPLOYEE, null, null);
-
-        // Status is null in order to test if it being set while ticket saving
-        Ticket ticket = new Ticket(1L, "Discrepancy while login", "Error 500 keeps pop up while password is correct", Instant.now(), Status.NEW, Category.NETWORK, Priority.HIGH, testUser, null);
+        mockBasicUserAndTicketRepo();
 
         TicketStatusUpdateDTO dto = new TicketStatusUpdateDTO(Status.IN_PROGRESS);
 
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
-        when(userRepository.existsById(1L)).thenReturn(true);
-        when(ticketRepository.findByIdAndCreatorId(1L, 1L)).thenReturn(Optional.of(ticket));
-        
         Ticket retrievedTicket = ticketRepository.findByIdAndCreatorId(1L, 1L).get();
 
         when(ticketRepository.save(retrievedTicket)).thenReturn(retrievedTicket);
@@ -145,24 +139,16 @@ public class TicketServiceTest {
     @Test
     void shouldRemoveTicketSuccessfully() {
         // Mock
-        User testUser = new User(1L, "tupac", "tupac123", "tupac@gmail.com", UserRole.EMPLOYEE, null, null);
-
-        Ticket ticket = new Ticket(1L, "Discrepancy while login", "Error 500 keeps pop up while password is correct", Instant.now(), Status.NEW, Category.NETWORK, Priority.HIGH, testUser, null);
+        mockBasicUserAndTicketRepo();
         // assure that user have its ticket list, as orphan removal will delete the tciket once it removed from user ticket list
-        List<Ticket> tickets = new ArrayList<>();
-        tickets.add(ticket);
-        testUser.setTickets(tickets);
-
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
-        when(userRepository.existsById(1L)).thenReturn(true);
-        when(ticketRepository.findByIdAndCreatorId(1L, 1L)).thenReturn(Optional.of(ticket));
-        when(userRepository.save(testUser)).thenReturn(testUser);
+        testUser.setTickets(new ArrayList<>(List.of(testTicket)));
+        when(ticketRepository.save(testTicket)).thenReturn(testTicket);
 
         // Act
         ticketService.removeTicket(1L, 1L);
 
         // Assert
-        assertFalse(testUser.getTickets().contains(ticket));
+        assertFalse(testUser.getTickets().contains(testTicket));
         verify(userRepository, times(1)).save(testUser);
         verify(ticketRepository, never()).delete(any());
     }
