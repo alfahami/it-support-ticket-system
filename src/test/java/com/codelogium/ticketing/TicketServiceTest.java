@@ -171,14 +171,17 @@ public class TicketServiceTest {
     void shouldRetrieveAuditLogSuccessfully() {
         // Mock
         when(ticketRepository.findCreatorByTicket(testTicket.getId())).thenReturn(Optional.of(testUser));
-        when(auditLogRepository.findByTicketId(testTicket.getId())).thenReturn(new ArrayList<>(List.of(testAuditLog)));
+        when(auditLogRepository.findByTicketId(testTicket.getId())).thenReturn(List.of(testAuditLog));
 
         // Act
         List<AuditLog> results = ticketService.retrieveAuditLogs(testTicket.getId(), testUser.getId());
 
         // Assert
-        assertEquals(testAuditLog.getAction(), results.get(0).getAction());
-        assertEquals(testAuditLog.getTicketId(), results.get(0).getTicketId());
-        assertEquals(testAuditLog.getUserId(), results.get(0).getUserId());
+        assertEquals(1, results.size(), 1);
+
+        AuditLog result = results.get(0);
+        assertEquals(testAuditLog.getAction(), result.getAction());
+        assertEquals(testAuditLog.getTicketId(), result.getTicketId());
+        assertEquals(testAuditLog.getUserId(), result.getUserId());
     }
 }
