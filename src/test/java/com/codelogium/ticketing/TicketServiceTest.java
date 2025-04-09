@@ -16,6 +16,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.codelogium.ticketing.dto.TicketInfoUpdateDTO;
 import com.codelogium.ticketing.dto.TicketStatusUpdateDTO;
+import com.codelogium.ticketing.entity.AuditLog;
 import com.codelogium.ticketing.entity.Ticket;
 import com.codelogium.ticketing.entity.User;
 import com.codelogium.ticketing.entity.enums.Category;
@@ -44,6 +45,7 @@ public class TicketServiceTest {
 
     private User testUser;
     private Ticket testTicket;
+    private AuditLog testAuditLog;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -52,6 +54,8 @@ public class TicketServiceTest {
         testUser = new User(1L, "tupac", "tupac123", "tupac@gmail.com", UserRole.EMPLOYEE, null, null);
 
         testTicket = new Ticket(1L, "Discrepancy while login", "Error 500 keeps pop up while password is correct", Instant.now(), Status.NEW, Category.NETWORK, Priority.HIGH, testUser, null);
+
+        testAuditLog = new AuditLog(1L, testTicket.getId(), null, testUser.getId(), "TICKET_CREATED", null, testTicket.getStatus().toString(), Instant.now());
     }
 
     private void mockBasicUserAndTicketRepo() {
@@ -161,6 +165,21 @@ public class TicketServiceTest {
         assertEquals(testTicket.getId(), result.getId());
         assertEquals(testTicket.getStatus(), result.getStatus());
         assertEquals(testTicket.getCreator().getRole(), result.getCreator().getRole());
+    }
+
+    @Test
+    void shouldRetrieveAuditLogSuccessfully() {
+        // Mock
+        when(ticketRepository.findCreatorByTicket(testTicket.getId())).thenReturn(Optional.of(testUser));
+        when(auditLogRepository.findByTicketId(testTicket.getId())).thenReturn(new ArrayList<>(List.of(testAuditLog)));
+
+        // Act
+        List<AuditLog> results = ticketService.retrieveAuditLogs(testTicket.getId(), testUser.getId());
+
+        // Assert
+        assertEquals(testAuditLog.getAction(), results.get(0).getAction());
+        assertEquals(testAuditLog.getTicketId(), results.get(0).getTicketId());
+        assertEquals(testAuditLog.getUserId(), results.get(0).getUserId());
     }
 
 }
