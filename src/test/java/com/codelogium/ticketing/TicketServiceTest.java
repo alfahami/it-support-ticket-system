@@ -59,18 +59,18 @@ public class TicketServiceTest {
     }
 
     private void mockBasicUserAndTicketRepo() {
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
-        when(userRepository.existsById(1L)).thenReturn(true);
-        when(ticketRepository.findByIdAndCreatorId(1L, 1L)).thenReturn(Optional.of(testTicket));
+        when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
+        when(userRepository.existsById(testUser.getId())).thenReturn(true);
+        when(ticketRepository.findByIdAndCreatorId(testTicket.getId(), testUser.getId())).thenReturn(Optional.of(testTicket));
     }
 
     @Test
     void shouldAddTicketSuccessfully() {
         //Mock
         // Status is null in order to test if it being set while ticket saving
-        Ticket ticketToCreate = new Ticket(1L, "Discrepancy while login", "Error 500 keeps pop up while password is correct", Instant.now(), null, Category.NETWORK, Priority.HIGH, testUser, null);
+        Ticket ticketToCreate = new Ticket(testTicket.getId(), "Discrepancy while login", "Error 500 keeps pop up while password is correct", Instant.now(), null, Category.NETWORK, Priority.HIGH, testUser, null);
 
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+        when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
         when(ticketRepository.save(ticketToCreate)).thenReturn(ticketToCreate);
 
         // Act
@@ -103,11 +103,11 @@ public class TicketServiceTest {
 
         TicketInfoUpdateDTO dto = new TicketInfoUpdateDTO("Can't Login even if password is correct", null, null, Category.OTHER, Priority.MEDIUM);
 
-        Ticket retrievedTicket = ticketRepository.findByIdAndCreatorId(1L, 1L).get();
+        Ticket retrievedTicket = ticketRepository.findByIdAndCreatorId(testTicket.getId(), testUser.getId()).get();
         when(ticketRepository.save(retrievedTicket)).thenReturn(retrievedTicket);
         
         // Act
-        Ticket result = ticketService.updateTicketInfo(1L, 1L, dto);
+        Ticket result = ticketService.updateTicketInfo(testTicket.getId(), testUser.getId(), dto);
 
         // assert
         assertEquals(dto.getTitle(), result.getTitle());
@@ -123,12 +123,12 @@ public class TicketServiceTest {
 
         TicketStatusUpdateDTO dto = new TicketStatusUpdateDTO(Status.IN_PROGRESS);
 
-        Ticket retrievedTicket = ticketRepository.findByIdAndCreatorId(1L, 1L).get();
+        Ticket retrievedTicket = ticketRepository.findByIdAndCreatorId(testTicket.getId(), testUser.getId()).get();
 
         when(ticketRepository.save(retrievedTicket)).thenReturn(retrievedTicket);
 
         // Act
-        Ticket result = ticketService.updateTicketStatus(1L, 1L, dto);
+        Ticket result = ticketService.updateTicketStatus(testTicket.getId(), testUser.getId(), dto);
 
         // assert
         assertEquals(dto.getStatus(), result.getStatus());
@@ -144,7 +144,7 @@ public class TicketServiceTest {
         when(ticketRepository.save(testTicket)).thenReturn(testTicket);
 
         // Act
-        ticketService.removeTicket(1L, 1L);
+        ticketService.removeTicket(testTicket.getId(), testUser.getId());
 
         // Assert
         assertFalse(testUser.getTickets().contains(testTicket));
