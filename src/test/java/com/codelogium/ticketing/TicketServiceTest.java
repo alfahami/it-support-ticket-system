@@ -181,5 +181,4 @@ public class TicketServiceTest {
         assertEquals(testAuditLog.getTicketId(), results.get(0).getTicketId());
         assertEquals(testAuditLog.getUserId(), results.get(0).getUserId());
     }
-
 }
