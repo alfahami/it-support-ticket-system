@@ -30,7 +30,6 @@ import com.codelogium.ticketing.service.TicketServiceImp;
 
 @ExtendWith(SpringExtension.class)
 public class TicketServiceTest {
-    //TODO: implements Ticket Test with roles checking
 
     private TicketService ticketService;
 
@@ -147,6 +146,21 @@ public class TicketServiceTest {
         assertFalse(testUser.getTickets().contains(testTicket));
         verify(userRepository, times(1)).save(testUser);
         verify(ticketRepository, never()).delete(any());
+    }
+
+    @Test
+    void shouldSearchTicketSuccessfully() {
+        // Mock
+        when(userRepository.existsById(testUser.getId())).thenReturn(true);
+        when(ticketRepository.findByTicketIdAndStatus(testTicket.getId(), Status.NEW)).thenReturn(Optional.of(testTicket));
+
+        // Act
+        Ticket result = ticketService.searchTicket(testTicket.getId(), testUser.getId(), Status.NEW);
+
+        // Assert
+        assertEquals(testTicket.getId(), result.getId());
+        assertEquals(testTicket.getStatus(), result.getStatus());
+        assertEquals(testTicket.getCreator().getRole(), result.getCreator().getRole());
     }
 
 }
