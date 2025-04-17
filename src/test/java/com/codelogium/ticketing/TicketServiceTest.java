@@ -23,6 +23,7 @@ import com.codelogium.ticketing.entity.enums.Category;
 import com.codelogium.ticketing.entity.enums.Priority;
 import com.codelogium.ticketing.entity.enums.Status;
 import com.codelogium.ticketing.entity.enums.UserRole;
+import com.codelogium.ticketing.exception.ResourceNotFoundException;
 import com.codelogium.ticketing.repository.AuditLogRepository;
 import com.codelogium.ticketing.repository.TicketRepository;
 import com.codelogium.ticketing.repository.UserRepository;
@@ -49,26 +50,31 @@ public class TicketServiceTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        ticketService = new TicketServiceImp(ticketRepository, userRepository,auditLogRepository);    
-        
+        ticketService = new TicketServiceImp(ticketRepository, userRepository, auditLogRepository);
+
         testUser = new User(1L, "tupac", "tupac123", "tupac@gmail.com", UserRole.EMPLOYEE, null, null);
 
-        testTicket = new Ticket(1L, "Discrepancy while login", "Error 500 keeps pop up while password is correct", Instant.now(), Status.NEW, Category.NETWORK, Priority.HIGH, testUser, null);
+        testTicket = new Ticket(1L, "Discrepancy while login", "Error 500 keeps pop up while password is correct",
+                Instant.now(), Status.NEW, Category.NETWORK, Priority.HIGH, testUser, null);
 
-        testAuditLog = new AuditLog(1L, testTicket.getId(), null, testUser.getId(), "TICKET_CREATED", null, testTicket.getStatus().toString(), Instant.now());
+        testAuditLog = new AuditLog(1L, testTicket.getId(), null, testUser.getId(), "TICKET_CREATED", null,
+                testTicket.getStatus().toString(), Instant.now());
     }
 
     private void mockBasicUserAndTicketRepo() {
         when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
         when(userRepository.existsById(testUser.getId())).thenReturn(true);
-        when(ticketRepository.findByIdAndCreatorId(testTicket.getId(), testUser.getId())).thenReturn(Optional.of(testTicket));
+        when(ticketRepository.findByIdAndCreatorId(testTicket.getId(), testUser.getId()))
+                .thenReturn(Optional.of(testTicket));
     }
 
     @Test
     void shouldAddTicketSuccessfully() {
-        //Mock
+        // Mock
         // Status is null in order to test if it being set while ticket saving
-        Ticket ticketToCreate = new Ticket(testTicket.getId(), "Discrepancy while login", "Error 500 keeps pop up while password is correct", Instant.now(), null, Category.NETWORK, Priority.HIGH, testUser, null);
+        Ticket ticketToCreate = new Ticket(testTicket.getId(), "Discrepancy while login",
+                "Error 500 keeps pop up while password is correct", Instant.now(), null, Category.NETWORK,
+                Priority.HIGH, testUser, null);
 
         when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
         when(ticketRepository.save(ticketToCreate)).thenReturn(ticketToCreate);
@@ -85,7 +91,7 @@ public class TicketServiceTest {
 
     @Test
     void shouldRetrieveTicketSuccessfully() {
-        //Mock
+        // Mock
         mockBasicUserAndTicketRepo();
 
         // Act
@@ -98,27 +104,29 @@ public class TicketServiceTest {
 
     @Test
     void shouldUpdateTicketInfoSuccessfully() {
-        //Mock
+        // Mock
         mockBasicUserAndTicketRepo();
 
-        TicketInfoUpdateDTO dto = new TicketInfoUpdateDTO("Can't Login even if password is correct", null, null, Category.OTHER, Priority.MEDIUM);
+        TicketInfoUpdateDTO dto = new TicketInfoUpdateDTO("Can't Login even if password is correct", null, null,
+                Category.OTHER, Priority.MEDIUM);
 
         Ticket retrievedTicket = ticketRepository.findByIdAndCreatorId(testTicket.getId(), testUser.getId()).get();
         when(ticketRepository.save(retrievedTicket)).thenReturn(retrievedTicket);
-        
+
         // Act
         Ticket result = ticketService.updateTicketInfo(testTicket.getId(), testUser.getId(), dto);
 
         // assert
         assertEquals(dto.getTitle(), result.getTitle());
-        assertEquals(testTicket.getDescription(), result.getDescription()); // assert with ticket because description was not changed
+        assertEquals(testTicket.getDescription(), result.getDescription()); // assert with ticket because description
+                                                                            // was not changed
         assertEquals(dto.getCategory(), result.getCategory());
         assertEquals(dto.getPriority(), result.getPriority());
     }
 
     @Test
     void shouldUpdateTicketStatusSuccessfully() {
-        //Mock
+        // Mock
         mockBasicUserAndTicketRepo();
 
         TicketStatusUpdateDTO dto = new TicketStatusUpdateDTO(Status.IN_PROGRESS);
@@ -132,14 +140,15 @@ public class TicketServiceTest {
 
         // assert
         assertEquals(dto.getStatus(), result.getStatus());
-        assertEquals(retrievedTicket.getTitle(), result.getTitle());  
+        assertEquals(retrievedTicket.getTitle(), result.getTitle());
     }
 
     @Test
     void shouldRemoveTicketSuccessfully() {
         // Mock
         mockBasicUserAndTicketRepo();
-        // assure that user have its ticket list, as orphan removal will delete the tciket once it removed from user ticket list
+        // assure that user have its ticket list, as orphan removal will delete the
+        // ticket once it removed from user ticket list
         testUser.setTickets(new ArrayList<>(List.of(testTicket)));
         when(ticketRepository.save(testTicket)).thenReturn(testTicket);
 
@@ -156,7 +165,8 @@ public class TicketServiceTest {
     void shouldSearchTicketSuccessfully() {
         // Mock
         when(userRepository.existsById(testUser.getId())).thenReturn(true);
-        when(ticketRepository.findByTicketIdAndStatus(testTicket.getId(), Status.NEW)).thenReturn(Optional.of(testTicket));
+        when(ticketRepository.findByTicketIdAndStatus(testTicket.getId(), Status.NEW))
+                .thenReturn(Optional.of(testTicket));
 
         // Act
         Ticket result = ticketService.searchTicket(testTicket.getId(), testUser.getId(), Status.NEW);
@@ -201,6 +211,23 @@ public class TicketServiceTest {
         assertEquals(testTicket.getStatus(), result.getStatus());
         assertEquals(testTicket.getCreator(), result.getCreator());
         assertEquals(testTicket.getId(), result.getId());
+    }
 
+    /* NON SUCCESSFUL CALLS */
+
+    @Test
+    void shouldFailRetrievingTicketsByCreator() throws Exception {
+        // Mock
+        when(userRepository.existsById(testUser.getId())).thenReturn(true);
+        when(ticketRepository.findByCreatorId(testUser.getId())).thenThrow(new ResourceNotFoundException("No tickets created yet."));
+
+        // Act
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class,() -> ticketService.retrieveTicketsByCreator(testUser.getId()));
+
+        // assert
+        String expectedMessage = "No tickets created yet.";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
     }
 }
