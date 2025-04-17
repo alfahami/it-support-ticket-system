@@ -140,7 +140,7 @@ public class TicketServiceImp implements TicketService {
 
     @Override
     public List<AuditLog> retrieveAuditLogs(Long ticketId, Long userId) {
-        // Verify user existance by checking the creator relationship
+        // Verify user existence by checking the creator relationship
         UserServiceImp.unwrapUser(userId, ticketRepository.findCreatorByTicket(ticketId));
 
         return auditLogRepository.findByTicketId(ticketId);
