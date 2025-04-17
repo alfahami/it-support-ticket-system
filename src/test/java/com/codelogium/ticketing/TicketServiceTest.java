@@ -184,4 +184,23 @@ public class TicketServiceTest {
         assertEquals(testAuditLog.getTicketId(), result.getTicketId());
         assertEquals(testAuditLog.getUserId(), result.getUserId());
     }
+
+    @Test
+    void shouldRetrieveTicketsByCreatorSuccessfully() {
+        // Mock
+        when(userRepository.existsById(testUser.getId())).thenReturn(true);
+        when(ticketRepository.findByCreatorId(testUser.getId())).thenReturn(List.of(testTicket));
+
+        // Act
+        List<Ticket> results = ticketService.retrieveTicketsByCreator(testUser.getId());
+
+        // Assert
+        assertEquals(1, results.size());
+
+        Ticket result = results.get(0);
+        assertEquals(testTicket.getStatus(), result.getStatus());
+        assertEquals(testTicket.getCreator(), result.getCreator());
+        assertEquals(testTicket.getId(), result.getId());
+
+    }
 }
